@@ -5,7 +5,7 @@
 An Agent Skill for **Arknights** that helps answer operator evaluation, skill priority, progression planning, lore questions, terminology, and stage strategy.
 
 > Unofficial project.  
-> This skill does not bundle a live game database, and it does not replace a live wiki, calculator, or database site. It must not present stale knowledge as current data; for questions about the current meta, latest events, or latest balance state, it should browse first when network access is available, and otherwise explicitly say the answer is not based on the latest information.
+> It does not bundle a game database and does not replace a live wiki or calculator.
 
 ## Typical Use Cases
 
@@ -41,42 +41,10 @@ Explicit invocation:
 $arknights-skill
 ```
 
-## Updating
-
-Send this message to your agent:
+To update to the latest version, you can also send this message to your agent:
 
 ```text
 Update my installed arknights-skill to the latest version from https://github.com/morandot/arknights-skill
-```
-
-## Repository Structure
-
-```text
-.
-├── arknights-skill/
-│   ├── SKILL.md
-│   ├── agents/openai.yaml
-│   └── references/
-├── README.md
-├── README.en.md
-├── LICENSE
-├── CHANGELOG.md
-├── install.sh
-├── update.sh
-└── registry.yaml
-```
-
-- `arknights-skill/SKILL.md`: main skill instructions
-- `arknights-skill/references/`: templates and style examples
-- `arknights-skill/agents/openai.yaml`: UI and discovery metadata
-- `install.sh` / `update.sh` / `registry.yaml`: compatibility and distribution support files
-
-## Development and Validation
-
-```bash
-python3 scripts/quick_validate.py arknights-skill
-bash -n install.sh
-bash -n update.sh
 ```
 
 ## License
