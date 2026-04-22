@@ -1,0 +1,7 @@
+interface:
+  display_name: "Arknights Guide"
+  short_description: "回答明日方舟干员强度、养成规划、剧情梳理与关卡思路"
+  default_prompt: "Use $arknights-skill to answer an Arknights question with clear conclusions, spoiler control, and explicit freshness caveats for current-version topics."
+
+policy:
+  allow_implicit_invocation: true
