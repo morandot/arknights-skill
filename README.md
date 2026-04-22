@@ -1,4 +1,4 @@
-# Arknights Guide Skill
+# Arknights Skill
 
 [English](./README.en.md)
 

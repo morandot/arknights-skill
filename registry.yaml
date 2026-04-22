@@ -7,7 +7,7 @@ skills:
       面向《明日方舟》的知识与攻略 skill，覆盖干员评价、技能选择、
       阵容建议、剧情梳理、术语解释与关卡思路，并明确处理剧透和版本时效性。
     author: moran
-    version: 1.1.0
+    version: 1.1.1
     repository: git+https://github.com/morandot/arknights-skill.git
     path: arknights-skill
     tags:
