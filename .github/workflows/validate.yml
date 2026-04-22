@@ -19,9 +19,9 @@ jobs:
         run: python -m pip install --upgrade pip pyyaml
 
       - name: Run validator
-        run: python scripts/quick_validate.py arknights-guide
+        run: python scripts/quick_validate.py arknights-skill
 
       - name: Check SKILL.md length
         run: |
-          lines=$(wc -l < arknights-guide/SKILL.md)
+          lines=$(wc -l < arknights-skill/SKILL.md)
           test "$lines" -le 500

@@ -4,7 +4,7 @@ set -euo pipefail
 TARGET_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEFAULT_REPO_URL="https://github.com/moranfong/arknights-skill.git"
 DEFAULT_REPO_REF="main"
-DEFAULT_SKILL_PATH="arknights-guide"
+DEFAULT_SKILL_PATH="arknights-skill"
 TMP_DIR="$(mktemp -d)"
 
 cleanup() {

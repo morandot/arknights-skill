@@ -11,7 +11,7 @@ This repository is intended for public distribution on GitHub and follows the st
 
 ## What This Skill Does
 
-`arknights-guide` is designed to turn Arknights questions into clear, decision-oriented answers rather than dumping raw information.
+`arknights-skill` is designed to turn Arknights questions into clear, decision-oriented answers rather than dumping raw information.
 
 It mainly covers:
 
@@ -42,11 +42,11 @@ It mainly covers:
 - Do not invent numbers, event dates, banners, or official text
 - Make freshness explicit for version-sensitive conclusions
 
-See [arknights-guide/SKILL.md](./arknights-guide/SKILL.md) for the full instruction set.
+See [arknights-skill/SKILL.md](./arknights-skill/SKILL.md) for the full instruction set.
 
 ## Compatibility
 
-This repository uses the standard Agent Skills layout, with the actual skill located in [`arknights-guide/`](./arknights-guide).
+This repository uses the standard Agent Skills layout, with the actual skill located in [`arknights-skill/`](./arknights-skill).
 
 Supported usage patterns:
 
@@ -62,13 +62,13 @@ Supported usage patterns:
 If your agent supports the `skills` ecosystem, you can often just send it this message:
 
 ```text
-Install the skill `arknights-guide` from https://github.com/morandot/arknights-skill
+Install the skill `arknights-skill` from https://github.com/morandot/arknights-skill
 ```
 
 If you use Claude Code, you can also say:
 
 ```text
-Please install this skill for me: https://github.com/morandot/arknights-skill . The skill name is arknights-guide.
+Please install this skill for me: https://github.com/morandot/arknights-skill . The skill name is arknights-skill.
 ```
 
 Many Agent Skills-compatible clients can choose the appropriate install flow automatically. If your client does not, use one of the explicit installation methods below.
@@ -76,33 +76,33 @@ Many Agent Skills-compatible clients can choose the appropriate install flow aut
 ### Option 1: Generic `skills` CLI
 
 ```bash
-npx skills add https://github.com/morandot/arknights-skill --skill arknights-guide
+npx skills add https://github.com/morandot/arknights-skill --skill arknights-skill
 ```
 
 Explicit invocation:
 
 ```text
-$arknights-guide
+$arknights-skill
 ```
 
 ### Option 2: Manual install for Codex
 
 ```bash
 mkdir -p ~/.codex/skills
-ln -s "$(pwd)/arknights-guide" ~/.codex/skills/arknights-guide
+ln -s "$(pwd)/arknights-skill" ~/.codex/skills/arknights-skill
 ```
 
 ### Option 3: Manual install for Claude Code
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s "$(pwd)/arknights-guide" ~/.claude/skills/arknights-guide
+ln -s "$(pwd)/arknights-skill" ~/.claude/skills/arknights-skill
 ```
 
 Explicit invocation in Claude Code:
 
 ```text
-/arknights-guide
+/arknights-skill
 ```
 
 ### Option 4: Hermes-compatible install
@@ -114,14 +114,14 @@ curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/insta
 Default install path:
 
 ```text
-~/.hermes/skills/research/arknights-guide
+~/.hermes/skills/research/arknights-skill
 ```
 
 ## Repository Structure
 
 ```text
 .
-├── arknights-guide/
+├── arknights-skill/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   └── references/
@@ -134,8 +134,8 @@ Default install path:
 └── registry.yaml
 ```
 
-- `arknights-guide/SKILL.md`: main skill instructions
-- `arknights-guide/references/`: templates and style examples
+- `arknights-skill/SKILL.md`: main skill instructions
+- `arknights-skill/references/`: templates and style examples
 - `agents/openai.yaml`: UI/discovery metadata
 - `install.sh` / `update.sh`: Hermes compatibility path
 - `registry.yaml`: Hermes registry metadata
@@ -154,13 +154,13 @@ It is best used as a structured decision-support skill, not as a live wiki mirro
 ## Publishing Notes
 
 - For `skills.sh`: there is no separate submission process. A public, installable repository is enough for discovery through install telemetry. [Reference](https://skills.sh/docs/faq)
-- For Claude Code: `arknights-guide/` can be used directly as `.claude/skills/<name>/`. [Reference](https://code.claude.com/docs/en/skills)
+- For Claude Code: `arknights-skill/` can be used directly as `.claude/skills/<name>/`. [Reference](https://code.claude.com/docs/en/skills)
 - For ClawHub: publishing must follow ClawHub’s versioning and publish flow. Published versions on ClawHub are distributed under ClawHub’s platform rules. [Reference](https://github.com/openclaw/clawhub/blob/main/docs/cli.md)
 
 ## Development and Validation
 
 ```bash
-python3 scripts/quick_validate.py arknights-guide
+python3 scripts/quick_validate.py arknights-skill
 bash -n install.sh
 bash -n update.sh
 ```

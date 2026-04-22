@@ -1,7 +1,7 @@
 registry_version: 1
 skills:
-  arknights-guide:
-    name: arknights-guide
+  arknights-skill:
+    name: arknights-skill
     description: 明日方舟攻略与信息查询技能
     long_description: |
       面向《明日方舟》的知识与攻略 skill，覆盖干员评价、技能选择、
@@ -9,7 +9,7 @@ skills:
     author: moran
     version: 1.1.0
     repository: git+https://github.com/morandot/arknights-skill.git
-    path: arknights-guide
+    path: arknights-skill
     tags:
       - gaming
       - arknights
@@ -17,4 +17,4 @@ skills:
       - zh-CN
     min_hermes_version: "0.1.0"
     last_updated: "2026-04-22"
-    install_command: skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-guide
+    install_command: skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill

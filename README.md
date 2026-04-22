@@ -11,7 +11,7 @@
 
 ## 这个 Skill 做什么
 
-`arknights-guide` 的目标不是堆资料，而是把《明日方舟》问题整理成玩家可以直接拿来做决定的回答。
+`arknights-skill` 的目标不是堆资料，而是把《明日方舟》问题整理成玩家可以直接拿来做决定的回答。
 
 主要覆盖：
 
@@ -42,11 +42,11 @@
 - 不编造数值、活动时间、池子安排或官方文本
 - 涉及时效性结论时，必须说明是不是基于最新检索
 
-完整规则见 [arknights-guide/SKILL.md](./arknights-guide/SKILL.md)。
+完整规则见 [arknights-skill/SKILL.md](./arknights-skill/SKILL.md)。
 
 ## 兼容性
 
-当前仓库采用标准 Agent Skills 目录结构，skill 本体位于 [`arknights-guide/`](./arknights-guide)。
+当前仓库采用标准 Agent Skills 目录结构，skill 本体位于 [`arknights-skill/`](./arknights-skill)。
 
 已对齐的使用方式：
 
@@ -62,13 +62,13 @@
 如果你的 agent 支持 `skills` 生态，可以直接把下面这句话发给它：
 
 ```text
-Install the skill `arknights-guide` from https://github.com/morandot/arknights-skill
+Install the skill `arknights-skill` from https://github.com/morandot/arknights-skill
 ```
 
 如果你在用 Claude Code，也可以直接说：
 
 ```text
-请帮我安装这个 skill：https://github.com/morandot/arknights-skill ，skill 名称是 arknights-guide
+请帮我安装这个 skill：https://github.com/morandot/arknights-skill ，skill 名称是 arknights-skill
 ```
 
 多数支持 Agent Skills 的客户端会自动选择合适的安装方式；如果不能自动安装，再使用下面的显式命令。
@@ -76,33 +76,33 @@ Install the skill `arknights-guide` from https://github.com/morandot/arknights-s
 ### 方式 1：通用 `skills` CLI
 
 ```bash
-npx skills add https://github.com/morandot/arknights-skill --skill arknights-guide
+npx skills add https://github.com/morandot/arknights-skill --skill arknights-skill
 ```
 
 显式调用：
 
 ```text
-$arknights-guide
+$arknights-skill
 ```
 
 ### 方式 2：Codex 手动安装
 
 ```bash
 mkdir -p ~/.codex/skills
-ln -s "$(pwd)/arknights-guide" ~/.codex/skills/arknights-guide
+ln -s "$(pwd)/arknights-skill" ~/.codex/skills/arknights-skill
 ```
 
 ### 方式 3：Claude Code 手动安装
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s "$(pwd)/arknights-guide" ~/.claude/skills/arknights-guide
+ln -s "$(pwd)/arknights-skill" ~/.claude/skills/arknights-skill
 ```
 
 在 Claude Code 中可显式调用：
 
 ```text
-/arknights-guide
+/arknights-skill
 ```
 
 ### 方式 4：Hermes 兼容安装
@@ -114,14 +114,14 @@ curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/insta
 默认安装到：
 
 ```text
-~/.hermes/skills/research/arknights-guide
+~/.hermes/skills/research/arknights-skill
 ```
 
 ## 仓库结构
 
 ```text
 .
-├── arknights-guide/
+├── arknights-skill/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
 │   └── references/
@@ -134,8 +134,8 @@ curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/insta
 └── registry.yaml
 ```
 
-- `arknights-guide/SKILL.md`：skill 主体说明
-- `arknights-guide/references/`：模板和风格示例
+- `arknights-skill/SKILL.md`：skill 主体说明
+- `arknights-skill/references/`：模板和风格示例
 - `agents/openai.yaml`：UI 展示和发现元数据
 - `install.sh` / `update.sh`：Hermes 兼容链路
 - `registry.yaml`：Hermes registry 元数据
@@ -154,13 +154,13 @@ curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/insta
 ## 发布与使用说明
 
 - 对 `skills.sh`：不需要额外提交流程，只要仓库公开、可安装，就可以通过安装遥测自然出现。[参考](https://skills.sh/docs/faq)
-- 对 Claude Code：该仓库里的 `arknights-guide/` 可直接作为 `.claude/skills/<name>/` 使用。[参考](https://code.claude.com/docs/en/skills)
+- 对 Claude Code：该仓库里的 `arknights-skill/` 可直接作为 `.claude/skills/<name>/` 使用。[参考](https://code.claude.com/docs/en/skills)
 - 对 ClawHub：发布时需要按 ClawHub 的发布流程和版本号要求操作；ClawHub 平台发布版本按其平台规则分发。[参考](https://github.com/openclaw/clawhub/blob/main/docs/cli.md)
 
 ## 开发与验证
 
 ```bash
-python3 scripts/quick_validate.py arknights-guide
+python3 scripts/quick_validate.py arknights-skill
 bash -n install.sh
 bash -n update.sh
 ```

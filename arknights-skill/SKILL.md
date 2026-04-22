@@ -1,5 +1,5 @@
 ---
-name: arknights-guide
+name: arknights-skill
 description: 回答《明日方舟》的干员定位、技能机制、养成建议、剧情梳理、术语解释与关卡思路，并在版本相关问题上明确区分最新检索结论和非最新判断。
 compatibility: 兼容 Agent Skills 客户端，包括 Codex 与 Claude Code。无内置脚本和外部凭据依赖；对“当前版本 / 最新活动 / 最新强度”类问题需要联网检索，离线时必须明确说明结论不是最新。
 metadata:

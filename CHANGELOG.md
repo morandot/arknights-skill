@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.1] - 2026-04-22
+
+### Changed
+- 将 skill slug、目录名、安装路径和调用方式从 `arknights-guide` 统一为 `arknights-skill`
+- 同步更新中英文 README、registry、脚本默认值与验证路径
 ## [1.1.0] - 2026-04-22
 
 ### Added
