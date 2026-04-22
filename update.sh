@@ -2,7 +2,7 @@
 set -euo pipefail
 
 TARGET_DIR="$(cd "$(dirname "$0")" && pwd)"
-DEFAULT_REPO_URL="https://github.com/moranfong/arknights-skill.git"
+DEFAULT_REPO_URL="https://github.com/morandot/arknights-skill.git"
 DEFAULT_REPO_REF="main"
 DEFAULT_SKILL_PATH="arknights-skill"
 TMP_DIR="$(mktemp -d)"
@@ -15,6 +15,11 @@ trap cleanup EXIT
 
 if [ ! -f "${TARGET_DIR}/SKILL.md" ]; then
     echo "update.sh must run from an installed skill directory." >&2
+    exit 1
+fi
+
+if ! command -v rsync >/dev/null 2>&1; then
+    echo "update.sh requires rsync. Install rsync and retry." >&2
     exit 1
 fi
 

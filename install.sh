@@ -3,7 +3,7 @@ set -euo pipefail
 
 SKILL_NAME="${SKILL_NAME:-arknights-skill}"
 SKILL_PATH="${SKILL_PATH:-arknights-skill}"
-REPO_URL="${REPO_URL:-https://github.com/moranfong/arknights-skill.git}"
+REPO_URL="${REPO_URL:-https://github.com/morandot/arknights-skill.git}"
 REPO_REF="${REPO_REF:-main}"
 INSTALL_DIR="${INSTALL_DIR:-${HOME}/.hermes/skills/research/${SKILL_NAME}}"
 TMP_DIR="$(mktemp -d)"

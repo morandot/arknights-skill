@@ -4,12 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.1.2] - 2026-04-22
+
+### Changed
+- 修复 `install.sh` 与 `update.sh` 的默认仓库 URL，改为 `morandot/arknights-skill`
+- 为 `update.sh` 增加 `rsync` 依赖检查，缺失时给出明确报错
+- 在 GitHub Actions 中加入 `bash -n install.sh` 与 `bash -n update.sh`
+- 丰富 `references/examples.md`，新增“技能选择”和“剧情介绍”示例
+- 补充历史命名说明，明确 `arknights-guide` 已在 `1.1.1` 重命名为 `arknights-skill`
+
 ## [1.1.1] - 2026-04-22
 
 ### Changed
 - 将 skill slug、目录名、安装路径和调用方式从 `arknights-guide` 统一为 `arknights-skill`
 - 同步更新中英文 README、registry、脚本默认值与验证路径
+
 ## [1.1.0] - 2026-04-22
+
+注：本版本中的 `arknights-guide` 目录名和 slug 已在 `1.1.1` 重命名为 `arknights-skill`。
 
 ### Added
 - 拆分出 `arknights-guide/` 作为独立 skill 包
