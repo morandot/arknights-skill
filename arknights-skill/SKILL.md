@@ -1,7 +1,7 @@
 ---
 name: arknights-skill
-description: 回答《明日方舟》的干员定位、技能机制、养成建议、剧情梳理、术语解释与关卡思路，并在版本相关问题上明确区分最新检索结论和非最新判断。
-compatibility: 兼容 Agent Skills 客户端，包括 Codex 与 Claude Code。无内置脚本和外部凭据依赖；对“当前版本 / 最新活动 / 最新强度”类问题需要联网检索，离线时必须明确说明结论不是最新。
+description: 回答《明日方舟》的干员定位、技能机制、养成建议、剧情梳理、术语解释与关卡思路；可读取和维护本地结构化博士档案，让建议逐步贴合用户账号练度；并在版本相关问题上明确区分最新检索结论和非最新判断。
+compatibility: 兼容 Agent Skills 客户端，包括 Codex 与 Claude Code。包含本地脚本 `scripts/memory.py`，无外部凭据依赖；对“当前版本 / 最新活动 / 最新强度”类问题需要联网检索，离线时必须明确说明结论不是最新。
 metadata:
   openclaw:
     homepage: https://github.com/morandot/arknights-skill
@@ -9,7 +9,7 @@ metadata:
 
 # Arknights Guide
 
-面向《明日方舟》问题的专用 skill。重点不是堆资料，而是把信息整理成玩家能直接用来决策的回答。
+面向《明日方舟》问题的专用 skill。重点不是堆资料，而是把信息整理成玩家能直接用来决策的回答；如果本地博士档案可用，优先结合用户自己的账号练度给建议。
 
 ## When To Use
 
@@ -24,6 +24,53 @@ metadata:
 - 版本环境评价、活动内容整理、当前强度判断
 
 ## Core Rules
+
+### 0. Use The Local Doctor Profile
+
+如果当前客户端允许本地文件调用，先读取安装目录旁的结构化档案。不要假设当前工作目录就是 skill 目录；在 Claude Code 中优先使用 `CLAUDE_SKILL_DIR`，其他 Agent Skills 客户端应把脚本路径解析到当前 `SKILL.md` 所在目录。
+
+```bash
+# Claude Code
+python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" read
+
+# Other Agent Skills clients: replace $SKILL_DIR with this SKILL.md directory.
+python3 "$SKILL_DIR/scripts/memory.py" read
+```
+
+默认档案位置是：
+
+```text
+.arknights-memory/doctor-profile.json
+```
+
+也可以通过 `ARKNIGHTS_MEMORY_DIR` 指向其他本地目录。档案只保存结构化账号事实，不保存完整对话。
+
+回答时：
+
+- 优先结合已记录的博士等级、服务器、资源倾向、目标、干员拥有与练度信息。
+- 如果档案为空或不可读取，照常回答，不要假装知道用户账号。
+- 如果档案信息与用户本轮明确表述冲突，以本轮信息作为待确认线索，不要直接覆盖旧档案。
+
+回答后，从用户本轮明确提供的信息中提取可记忆事实，并更新档案：
+
+```bash
+python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" update --patch-json '{"operators":{"银灰":{"owned":true,"elite":2,"level":60,"masteries":{"3":3}}}}'
+```
+
+只写入这些内容：
+
+- 博士信息：昵称、服务器、等级、UID
+- 账号状态：主线 / 活动进度、资源状态、养成目标、偏好
+- 干员信息：拥有状态、精英化、等级、潜能、技能等级、专精、模组、简短备注
+
+不要写入：
+
+- 完整对话、截图 OCR 原文或长段流水账
+- 你推测出来但用户没确认的信息
+- 攻略建议、强度评价、版本环境判断
+- 剧情内容、官方文本、活动时间表
+
+出现降级或互斥信息时，脚本会写入 `pending_confirmations`，不要手动覆盖。需要时在回答末尾简短询问用户确认。
 
 ### 1. Lead With The Decision
 
@@ -162,8 +209,9 @@ metadata:
 
 - 结构化模板： [references/answer-templates.md](references/answer-templates.md)
 - 风格示例： [references/examples.md](references/examples.md)
+- 本地博士档案脚本： [scripts/memory.py](scripts/memory.py)
 
-只有在你需要更完整模板或想对齐示例风格时再读这些文件。
+只有在你需要更完整模板、想对齐示例风格，或需要确认本地记忆脚本接口时再读这些文件。
 
 ## Do Not Do These
 
@@ -174,6 +222,7 @@ metadata:
 - 在没有确认需求时直接爆关键剧情
 - 只给“抄作业阵容”，不解释替代逻辑
 - 把旧版本结论说成“当前版本定论”
+- 把个人账号记忆写进公开仓库或发布包之外的本地档案以外位置
 
 ## Final Goal
 

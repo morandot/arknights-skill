@@ -42,6 +42,7 @@ if [ -n "${CURRENT_COMMIT}" ]; then
             --exclude ".source-ref" \
             --exclude ".source-repo" \
             --exclude ".source-skill-path" \
+            --exclude ".arknights-memory" \
             --exclude "update.sh" \
             "${TMP_DIR}/previous/${SKILL_PATH}" "${TARGET_DIR}" >/dev/null; then
             echo "Local modifications detected in ${TARGET_DIR}. Reinstall or resolve them manually." >&2
@@ -60,14 +61,17 @@ rsync -a --delete \
     --exclude ".source-ref" \
     --exclude ".source-repo" \
     --exclude ".source-skill-path" \
+    --exclude ".arknights-memory" \
     --exclude "update.sh" \
     "${TMP_DIR}/repo/${SKILL_PATH}/" "${TARGET_DIR}/"
 
-cp "${TMP_DIR}/repo/update.sh" "${TARGET_DIR}/update.sh"
-chmod +x "${TARGET_DIR}/update.sh"
+UPDATED_UPDATE_SH="${TMP_DIR}/update.sh"
+cp "${TMP_DIR}/repo/update.sh" "${UPDATED_UPDATE_SH}"
+chmod +x "${UPDATED_UPDATE_SH}"
 printf '%s\n' "${LATEST_COMMIT}" > "${TARGET_DIR}/.source-commit"
 printf '%s\n' "${REPO_URL}" > "${TARGET_DIR}/.source-repo"
 printf '%s\n' "${REPO_REF}" > "${TARGET_DIR}/.source-ref"
 printf '%s\n' "${SKILL_PATH}" > "${TARGET_DIR}/.source-skill-path"
+mv "${UPDATED_UPDATE_SH}" "${TARGET_DIR}/update.sh"
 
 echo "Updated ${TARGET_DIR} to ${LATEST_COMMIT}"

@@ -14,3 +14,9 @@ Thumbs.db
 # 备份文件
 *.bak
 *.tmp
+
+# arknights-skill 本地账号记忆
+**/.arknights-memory/
+
+# 本地打包产物
+dist/

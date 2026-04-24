@@ -24,7 +24,7 @@ if [ ! -f "${SOURCE_DIR}/SKILL.md" ]; then
 fi
 
 mkdir -p "${INSTALL_DIR}"
-find "${INSTALL_DIR}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+find "${INSTALL_DIR}" -mindepth 1 -maxdepth 1 ! -name ".arknights-memory" -exec rm -rf {} +
 cp -R "${SOURCE_DIR}/." "${INSTALL_DIR}/"
 cp "${TMP_DIR}/repo/update.sh" "${INSTALL_DIR}/update.sh"
 chmod +x "${INSTALL_DIR}/update.sh"

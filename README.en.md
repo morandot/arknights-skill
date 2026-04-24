@@ -6,6 +6,7 @@ An Agent Skill for **Arknights** that helps answer operator evaluation, skill pr
 
 > Unofficial project.  
 > It does not bundle a game database and does not replace a live wiki or calculator.
+> It can maintain a local structured Doctor profile; it does not save full conversations or upload account data.
 
 ## Typical Use Cases
 
@@ -18,6 +19,12 @@ An Agent Skill for **Arknights** that helps answer operator evaluation, skill pr
 - “Is this operator still strong in the current version?”
 
 See [arknights-skill/SKILL.md](./arknights-skill/SKILL.md) for the full instruction set.
+
+## Local Account Memory
+
+After installation, the skill can maintain `.arknights-memory/doctor-profile.json` next to the installed skill directory. It stores structured facts explicitly provided by the user, such as Doctor level, resource priorities, owned operators, and operator investment. Skill updates preserve this directory.
+
+This feature requires the Agent client to support local file access and Python script execution. Without that, the skill still works as a normal guide.
 
 ## Installation
 

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0] - 2026-04-24
+
+### Added
+- 新增本地结构化博士档案工作流，支持读取和维护安装目录旁的 `.arknights-memory/doctor-profile.json`
+- 新增 `scripts/memory.py`，提供 `path`、`read`、`update --patch-json` 命令，用于初始化、读取和保守合并账号事实
+
+### Changed
+- `install.sh` 与 `update.sh` 现在会保留 `.arknights-memory/`，避免更新 skill 时删除本地账号档案
+- 更新中英文 README、registry 与 skill metadata，说明本地账号记忆的边界
+
 ## [1.1.2] - 2026-04-22
 
 ### Changed
