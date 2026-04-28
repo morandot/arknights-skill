@@ -6,15 +6,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
+import sys
 import tempfile
 from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-
 SCHEMA_VERSION = 1
-MEMORY_DIR_NAME = ".arknights-memory"
 PROFILE_FILE_NAME = "doctor-profile.json"
 MAX_FACT_TEXT_LENGTH = 240
 
@@ -31,11 +31,25 @@ def memory_dir() -> Path:
     configured = os.environ.get("ARKNIGHTS_MEMORY_DIR")
     if configured:
         return Path(configured).expanduser().resolve()
-    return skill_root() / MEMORY_DIR_NAME
+    return Path("~/.config/arknights-skill").expanduser().resolve()
 
 
 def profile_path() -> Path:
     return memory_dir() / PROFILE_FILE_NAME
+
+
+def migrate_legacy_if_needed() -> None:
+    """One-time migration: copy data from old skill-relative path to new default."""
+    if os.environ.get("ARKNIGHTS_MEMORY_DIR"):
+        return
+    legacy = skill_root() / ".arknights-memory" / PROFILE_FILE_NAME
+    new_path = profile_path()
+    if legacy.exists() and not new_path.exists():
+        new_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(str(legacy), str(new_path))
+        (legacy.parent / ".migrated").write_text(
+            f"Migrated to {new_path}\n", encoding="utf-8"
+        )
 
 
 def empty_profile(timestamp: str | None = None) -> dict[str, Any]:
@@ -327,9 +341,14 @@ def merge_elite_and_level(
                 changed = True
             return changed
         if incoming_elite < current_elite:
-            add_pending(profile, f"{field_prefix}.elite", current_elite, incoming_elite, "incoming elite is lower", timestamp)
+            add_pending(
+                profile, f"{field_prefix}.elite", current_elite, incoming_elite, "incoming elite is lower", timestamp,
+            )
             if incoming_level is not None:
-                add_pending(profile, f"{field_prefix}.level", current_level, incoming_level, "incoming level belongs to lower elite", timestamp)
+                add_pending(
+                    profile, f"{field_prefix}.level", current_level, incoming_level,
+                    "incoming level belongs to lower elite", timestamp,
+                )
             return True
 
     if has_level and incoming_level is not None:
@@ -340,13 +359,17 @@ def merge_elite_and_level(
             operator["level"] = incoming_level
             return True
         if incoming_level < current_level:
-            add_pending(profile, f"{field_prefix}.level", current_level, incoming_level, "incoming level is lower", timestamp)
+            add_pending(
+                profile, f"{field_prefix}.level", current_level, incoming_level, "incoming level is lower", timestamp,
+            )
             return True
 
     return changed
 
 
-def merge_masteries(profile: dict[str, Any], operator: dict[str, Any], incoming: Any, field_prefix: str, timestamp: str) -> bool:
+def merge_masteries(
+    profile: dict[str, Any], operator: dict[str, Any], incoming: Any, field_prefix: str, timestamp: str,
+) -> bool:
     if not isinstance(incoming, dict):
         raise ValueError(f"{field_prefix}.masteries must be an object.")
     changed = False
@@ -365,7 +388,9 @@ def merge_masteries(profile: dict[str, Any], operator: dict[str, Any], incoming:
     return changed
 
 
-def merge_legacy_skills(profile: dict[str, Any], operator: dict[str, Any], incoming: Any, field_prefix: str, timestamp: str) -> bool:
+def merge_legacy_skills(
+    profile: dict[str, Any], operator: dict[str, Any], incoming: Any, field_prefix: str, timestamp: str,
+) -> bool:
     if not isinstance(incoming, dict):
         raise ValueError(f"{field_prefix}.skills must be an object.")
     changed = False
@@ -393,7 +418,9 @@ def merge_legacy_skills(profile: dict[str, Any], operator: dict[str, Any], incom
     return changed
 
 
-def merge_modules(profile: dict[str, Any], operator: dict[str, Any], incoming: Any, field_prefix: str, timestamp: str) -> bool:
+def merge_modules(
+    profile: dict[str, Any], operator: dict[str, Any], incoming: Any, field_prefix: str, timestamp: str,
+) -> bool:
     if not isinstance(incoming, dict):
         raise ValueError(f"{field_prefix}.modules must be an object.")
     changed = False
@@ -467,7 +494,13 @@ def merge_operator(profile: dict[str, Any], name: str, patch: Any, timestamp: st
     return changed
 
 
-def merge_mapping_latest(target: dict[str, Any], incoming: Any, field: str) -> bool:
+def merge_mapping_latest(
+    profile: dict[str, Any],
+    target: dict[str, Any],
+    incoming: Any,
+    field: str,
+    timestamp: str,
+) -> bool:
     if not isinstance(incoming, dict):
         raise ValueError(f"{field} must be an object.")
     changed = False
@@ -475,15 +508,22 @@ def merge_mapping_latest(target: dict[str, Any], incoming: Any, field: str) -> b
         key = clean_fact_text(raw_key, f"{field} key")
         if key is None or raw_value in (None, ""):
             continue
-        if isinstance(raw_value, str):
-            value: Any = clean_fact_text(raw_value, f"{field}.{key}")
-        elif isinstance(raw_value, (int, float, bool)):
-            value = raw_value
+        sub_field = f"{field}.{key}"
+        if isinstance(raw_value, (int, float)) and not isinstance(raw_value, bool):
+            changed = merge_monotonic_int(
+                profile, target, key, raw_value, sub_field, timestamp,
+            ) or changed
+        elif isinstance(raw_value, str):
+            value: Any = clean_fact_text(raw_value, sub_field)
+            if target.get(key) != value:
+                target[key] = value
+                changed = True
+        elif isinstance(raw_value, bool):
+            if target.get(key) != raw_value:
+                target[key] = raw_value
+                changed = True
         else:
-            raise ValueError(f"{field}.{key} must be a concise string, number, or boolean.")
-        if target.get(key) != value:
-            target[key] = value
-            changed = True
+            raise ValueError(f"{sub_field} must be a concise string, number, or boolean.")
     return changed
 
 
@@ -500,11 +540,17 @@ def apply_patch(profile: dict[str, Any], patch: Any) -> dict[str, Any]:
         if not isinstance(doctor_patch, dict):
             raise ValueError("doctor must be an object.")
         if "name" in doctor_patch:
-            changed = merge_text_scalar(updated, updated["doctor"], "name", doctor_patch["name"], "doctor.name", timestamp) or changed
+            changed = merge_text_scalar(
+                updated, updated["doctor"], "name", doctor_patch["name"], "doctor.name", timestamp,
+            ) or changed
         if "server" in doctor_patch:
-            changed = merge_text_scalar(updated, updated["doctor"], "server", doctor_patch["server"], "doctor.server", timestamp) or changed
+            changed = merge_text_scalar(
+                updated, updated["doctor"], "server", doctor_patch["server"], "doctor.server", timestamp,
+            ) or changed
         if "uid" in doctor_patch:
-            changed = merge_text_scalar(updated, updated["doctor"], "uid", doctor_patch["uid"], "doctor.uid", timestamp) or changed
+            changed = merge_text_scalar(
+                updated, updated["doctor"], "uid", doctor_patch["uid"], "doctor.uid", timestamp,
+            ) or changed
         if "level" in doctor_patch:
             changed = merge_monotonic_int(
                 updated,
@@ -521,13 +567,21 @@ def apply_patch(profile: dict[str, Any], patch: Any) -> dict[str, Any]:
         if not isinstance(account_patch, dict):
             raise ValueError("account must be an object.")
         if "progress" in account_patch:
-            changed = merge_mapping_latest(updated["account"]["progress"], account_patch["progress"], "account.progress") or changed
+            changed = merge_mapping_latest(
+                updated, updated["account"]["progress"], account_patch["progress"], "account.progress", timestamp,
+            ) or changed
         if "resources" in account_patch:
-            changed = merge_mapping_latest(updated["account"]["resources"], account_patch["resources"], "account.resources") or changed
+            changed = merge_mapping_latest(
+                updated, updated["account"]["resources"], account_patch["resources"], "account.resources", timestamp,
+            ) or changed
         if "goals" in account_patch:
-            changed = append_unique_text(updated["account"]["goals"], account_patch["goals"], "account.goals") or changed
+            changed = append_unique_text(
+                updated["account"]["goals"], account_patch["goals"], "account.goals",
+            ) or changed
         if "preferences" in account_patch:
-            changed = append_unique_text(updated["account"]["preferences"], account_patch["preferences"], "account.preferences") or changed
+            changed = append_unique_text(
+                updated["account"]["preferences"], account_patch["preferences"], "account.preferences",
+            ) or changed
 
     operators_patch = patch.get("operators")
     if operators_patch is not None:
@@ -551,6 +605,12 @@ def command_read(_: argparse.Namespace) -> int:
     if created:
         save_profile(profile, touch_updated_at=False)
     print_json(profile)
+    pending = profile.get("pending_confirmations", [])
+    if pending:
+        print(f"\n--- {len(pending)} pending confirmation(s) ---", file=sys.stderr)
+        for p in pending:
+            reason = p.get("reason", "")
+            print(f"  - {p['field']}: {p.get('current')} -> {p.get('incoming')} ({reason})", file=sys.stderr)
     return 0
 
 
@@ -562,6 +622,58 @@ def command_update(args: argparse.Namespace) -> int:
     updated = apply_patch(profile, patch)
     save_profile(updated, touch_updated_at=False)
     print_json(updated)
+    return 0
+
+
+def _set_nested(profile: dict[str, Any], field: str, value: Any) -> None:
+    """Set a value deep in the profile tree by dot-separated field path."""
+    parts = field.split(".")
+    current: Any = profile
+    for part in parts[:-1]:
+        if part not in current or not isinstance(current[part], dict):
+            current[part] = {}
+        current = current[part]
+    current[parts[-1]] = value
+
+
+def command_confirm(args: argparse.Namespace) -> int:
+    profile, created = load_profile()
+    if created:
+        save_profile(profile, touch_updated_at=False)
+    field = args.field
+    pending = profile.get("pending_confirmations", [])
+    matches = [p for p in pending if p.get("field") == field]
+    if not matches:
+        print(f"No pending confirmation for field '{field}'.", file=sys.stderr)
+        return 1
+    item = matches[0]
+    _set_nested(profile, item["field"], item["incoming"])
+    profile["metadata"]["updated_at"] = now_utc()
+    profile["pending_confirmations"] = [
+        p for p in profile["pending_confirmations"]
+        if not (p.get("field") == field and p.get("incoming") == item["incoming"])
+    ]
+    save_profile(profile, touch_updated_at=False)
+    print(f"Applied pending value for '{field}': {item['incoming']}")
+    return 0
+
+
+def command_dismiss(args: argparse.Namespace) -> int:
+    profile, created = load_profile()
+    if created:
+        save_profile(profile, touch_updated_at=False)
+    field = args.field
+    before = len(profile.get("pending_confirmations", []))
+    profile["pending_confirmations"] = [
+        p for p in profile["pending_confirmations"]
+        if p.get("field") != field
+    ]
+    after = len(profile["pending_confirmations"])
+    if before == after:
+        print(f"No pending confirmation for field '{field}'.", file=sys.stderr)
+        return 1
+    save_profile(profile)
+    print(f"Dismissed {before - after} pending confirmation(s) for '{field}'.")
     return 0
 
 
@@ -579,10 +691,20 @@ def build_parser() -> argparse.ArgumentParser:
     update_parser.add_argument("--patch-json", required=True, help="Structured JSON facts to merge.")
     update_parser.set_defaults(func=command_update)
 
+    confirm_parser = subparsers.add_parser("confirm", help="Apply a pending confirmation.")
+    confirm_parser.add_argument("--field", required=True, help="Field name of the pending confirmation.")
+    confirm_parser.add_argument("--apply", action="store_true", required=True, help="Actually apply the pending value.")
+    confirm_parser.set_defaults(func=command_confirm)
+
+    dismiss_parser = subparsers.add_parser("dismiss", help="Discard a pending confirmation.")
+    dismiss_parser.add_argument("--field", required=True, help="Field name of the pending confirmation.")
+    dismiss_parser.set_defaults(func=command_dismiss)
+
     return parser
 
 
 def main() -> int:
+    migrate_legacy_if_needed()
     parser = build_parser()
     args = parser.parse_args()
     try:

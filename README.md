@@ -22,7 +22,7 @@
 
 ## 本地账号记忆
 
-安装后，skill 可在安装目录旁维护 `.arknights-memory/doctor-profile.json`，记录用户明确提供的博士等级、资源倾向、干员拥有与练度等结构化信息。更新 skill 时会保留这个目录。
+安装后，skill 可在 `~/.config/arknights-skill/doctor-profile.json` 维护本地博士档案，记录用户明确提供的博士等级、资源倾向、干员拥有与练度等结构化信息。该路径与 skill 安装目录独立，更新或重装 skill 不会影响档案数据。
 
 该能力需要 Agent 客户端支持本地文件访问和 Python 脚本执行；不支持时会退化为普通问答。
 

@@ -11,12 +11,23 @@ Thumbs.db
 *.swp
 *.swo
 
+# Python
+__pycache__/
+*.pyc
+
 # 备份文件
 *.bak
 *.tmp
 
 # arknights-skill 本地账号记忆
 **/.arknights-memory/
+.config/arknights-skill/
 
 # 本地打包产物
 dist/
+
+# Codex
+.codex/
+
+# uv lockfile
+uv.lock

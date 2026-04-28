@@ -8,7 +8,7 @@ skills:
       阵容建议、剧情梳理、术语解释与关卡思路，可维护本地结构化博士档案，
       并明确处理剧透和版本时效性。
     author: moran
-    version: 1.2.0
+    version: 1.3.0
     repository: git+https://github.com/morandot/arknights-skill.git
     path: arknights-skill
     tags:
@@ -17,5 +17,5 @@ skills:
       - guide
       - zh-CN
     min_hermes_version: "0.1.0"
-    last_updated: "2026-04-24"
+    last_updated: "2026-04-28"
     install_command: skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill

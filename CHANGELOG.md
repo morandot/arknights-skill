@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.3.0] - 2026-04-28
+
+### Changed
+- **Breaking**: 博士档案默认存储路径从 `<skill-install>/.arknights-memory/` 改为 `~/.config/arknights-skill/doctor-profile.json`，与 skill 安装目录解耦
+- 首次运行时自动迁移旧路径数据到新路径（仅当新路径不存在时；旧数据保留不动）
+- `merge_mapping_latest` 对数值型字段（`account.progress`、`account.resources`）改为单调递增合并策略，拒绝降级并写入 `pending_confirmations`（原为直接覆盖）
+
+### Added
+- `confirm --field <field> --apply` 命令：应用待确认的降级/冲突值
+- `dismiss --field <field>` 命令：丢弃待确认项
+- `read` 命令输出后在 stderr 显示待确认项摘要
+- `scripts/bump_version.sh`：自动同步 VERSION 到 registry.yaml
+- `pyproject.toml`：ruff + pytest 配置
+- `tests/`：memory.py 全覆盖单元测试
+- CI 增加 ruff lint、pytest、必要文件存在性检查
+- `update.sh` 支持 `--force` 标志；检测到本地修改时显示 diff
+
+### Removed
+- `install.sh` 和 `update.sh` 中对 `.arknights-memory` 的排除逻辑（数据已迁移至 `~/.config/`）
+
 ## [1.2.0] - 2026-04-24
 
 ### Added

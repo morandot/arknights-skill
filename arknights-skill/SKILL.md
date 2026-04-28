@@ -40,10 +40,12 @@ python3 "$SKILL_DIR/scripts/memory.py" read
 默认档案位置是：
 
 ```text
-.arknights-memory/doctor-profile.json
+~/.config/arknights-skill/doctor-profile.json
 ```
 
 也可以通过 `ARKNIGHTS_MEMORY_DIR` 指向其他本地目录。档案只保存结构化账号事实，不保存完整对话。
+
+如果 `$CLAUDE_SKILL_DIR` 和 `$SKILL_DIR` 均未设置，可从 `~/.hermes/skills` 或 `~/.config/arknights-skill` 搜索 `memory.py` 所在路径。
 
 回答时：
 

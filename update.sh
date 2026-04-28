@@ -6,6 +6,13 @@ DEFAULT_REPO_URL="https://github.com/morandot/arknights-skill.git"
 DEFAULT_REPO_REF="main"
 DEFAULT_SKILL_PATH="arknights-skill"
 TMP_DIR="$(mktemp -d)"
+FORCE_UPDATE="${FORCE_UPDATE:-false}"
+
+for arg in "$@"; do
+    case "$arg" in
+        --force) FORCE_UPDATE="true" ;;
+    esac
+done
 
 cleanup() {
     rm -rf "${TMP_DIR}"
@@ -42,11 +49,22 @@ if [ -n "${CURRENT_COMMIT}" ]; then
             --exclude ".source-ref" \
             --exclude ".source-repo" \
             --exclude ".source-skill-path" \
-            --exclude ".arknights-memory" \
             --exclude "update.sh" \
             "${TMP_DIR}/previous/${SKILL_PATH}" "${TARGET_DIR}" >/dev/null; then
-            echo "Local modifications detected in ${TARGET_DIR}. Reinstall or resolve them manually." >&2
-            exit 1
+            echo "Local modifications detected in ${TARGET_DIR}:" >&2
+            diff -r \
+                --exclude ".source-commit" \
+                --exclude ".source-ref" \
+                --exclude ".source-repo" \
+                --exclude ".source-skill-path" \
+                --exclude "update.sh" \
+                "${TMP_DIR}/previous/${SKILL_PATH}" "${TARGET_DIR}" || true
+            if [ "${FORCE_UPDATE}" != "true" ]; then
+                echo "" >&2
+                echo "Reinstall or resolve them manually, or use --force to overwrite." >&2
+                exit 1
+            fi
+            echo "Forcing update despite local modifications (--force)..." >&2
         fi
     fi
 fi
@@ -61,7 +79,6 @@ rsync -a --delete \
     --exclude ".source-ref" \
     --exclude ".source-repo" \
     --exclude ".source-skill-path" \
-    --exclude ".arknights-memory" \
     --exclude "update.sh" \
     "${TMP_DIR}/repo/${SKILL_PATH}/" "${TARGET_DIR}/"
 

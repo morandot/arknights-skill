@@ -16,12 +16,13 @@ jobs:
           python-version: "3.11"
 
       - name: Install validation deps
-        run: python -m pip install --upgrade pip pyyaml
+        run: python -m pip install --upgrade pip pyyaml pytest ruff
 
       - name: Check shell scripts
         run: |
           bash -n install.sh
           bash -n update.sh
+          bash -n scripts/bump_version.sh
 
       - name: Run validator
         run: python scripts/quick_validate.py arknights-skill
@@ -30,3 +31,24 @@ jobs:
         run: |
           lines=$(wc -l < arknights-skill/SKILL.md)
           test "$lines" -le 500
+
+      - name: Lint with ruff
+        run: ruff check arknights-skill/scripts/memory.py scripts/quick_validate.py
+
+      - name: Run tests
+        run: pytest tests/ -v
+
+      - name: Check required files exist
+        run: |
+          for f in \
+            arknights-skill/references/answer-templates.md \
+            arknights-skill/references/examples.md \
+            arknights-skill/agents/openai.yaml \
+            arknights-skill/scripts/memory.py \
+            arknights-skill/SKILL.md; do
+            if [ ! -f "$f" ]; then
+              echo "Required file missing: $f" >&2
+              exit 1
+            fi
+          done
+          echo "All required files present."
