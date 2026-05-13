@@ -156,6 +156,7 @@ def clean_fact_text(value: Any, field: str) -> str | None:
     text = str(value).strip()
     if not text:
         return None
+    # Reject any line break form so profile facts stay compact across platforms.
     if "\n" in text or "\r" in text or len(text) > MAX_FACT_TEXT_LENGTH:
         raise ValueError(f"{field} must be a concise single factual note, not raw dialogue.")
     return text
@@ -164,6 +165,7 @@ def clean_fact_text(value: Any, field: str) -> str | None:
 def to_int(value: Any, field: str) -> int | None:
     if value is None or value == "":
         return None
+    # bool is an int subclass in Python, but profile progression fields must be numeric facts.
     if isinstance(value, bool):
         raise ValueError(f"{field} must be an integer.")
     try:
@@ -179,7 +181,7 @@ def add_pending(
     incoming: Any,
     reason: str,
     timestamp: str,
-) -> None:
+) -> bool:
     item = {
         "field": field,
         "current": current,
@@ -193,8 +195,10 @@ def add_pending(
             and existing.get("current") == current
             and existing.get("incoming") == incoming
         ):
-            return
+            # A repeated confirmation request should not refresh metadata.
+            return False
     profile["pending_confirmations"].append(item)
+    return True
 
 
 def merge_text_scalar(
@@ -214,8 +218,7 @@ def merge_text_scalar(
         return True
     if current == value:
         return False
-    add_pending(profile, field, current, value, "conflicting explicit facts", timestamp)
-    return True
+    return add_pending(profile, field, current, value, "conflicting explicit facts", timestamp)
 
 
 def merge_monotonic_int(
@@ -249,8 +252,7 @@ def merge_monotonic_int(
     if value == current_int:
         return False
 
-    add_pending(profile, field, current, value, "incoming value is lower than stored progression", timestamp)
-    return True
+    return add_pending(profile, field, current, value, "incoming value is lower than stored progression", timestamp)
 
 
 def append_unique_text(target: list[Any], incoming: Any, field: str) -> bool:
@@ -307,8 +309,7 @@ def merge_owned(profile: dict[str, Any], operator: dict[str, Any], incoming: Any
         operator["owned"] = True
         return True
 
-    add_pending(profile, field, current, incoming, "owned status conflicts with stored profile", timestamp)
-    return True
+    return add_pending(profile, field, current, incoming, "owned status conflicts with stored profile", timestamp)
 
 
 def merge_elite_and_level(
@@ -341,15 +342,15 @@ def merge_elite_and_level(
                 changed = True
             return changed
         if incoming_elite < current_elite:
-            add_pending(
+            changed = add_pending(
                 profile, f"{field_prefix}.elite", current_elite, incoming_elite, "incoming elite is lower", timestamp,
-            )
+            ) or changed
             if incoming_level is not None:
-                add_pending(
+                changed = add_pending(
                     profile, f"{field_prefix}.level", current_level, incoming_level,
                     "incoming level belongs to lower elite", timestamp,
-                )
-            return True
+                ) or changed
+            return changed
 
     if has_level and incoming_level is not None:
         if current_level is None:
@@ -359,10 +360,9 @@ def merge_elite_and_level(
             operator["level"] = incoming_level
             return True
         if incoming_level < current_level:
-            add_pending(
+            return add_pending(
                 profile, f"{field_prefix}.level", current_level, incoming_level, "incoming level is lower", timestamp,
             )
-            return True
 
     return changed
 
@@ -500,9 +500,13 @@ def merge_mapping_latest(
     incoming: Any,
     field: str,
     timestamp: str,
+    *,
+    numeric_strategy: str = "monotonic",
 ) -> bool:
     if not isinstance(incoming, dict):
         raise ValueError(f"{field} must be an object.")
+    if numeric_strategy not in {"monotonic", "latest"}:
+        raise ValueError(f"Unsupported numeric merge strategy: {numeric_strategy}")
     changed = False
     for raw_key, raw_value in incoming.items():
         key = clean_fact_text(raw_key, f"{field} key")
@@ -510,9 +514,13 @@ def merge_mapping_latest(
             continue
         sub_field = f"{field}.{key}"
         if isinstance(raw_value, (int, float)) and not isinstance(raw_value, bool):
-            changed = merge_monotonic_int(
-                profile, target, key, raw_value, sub_field, timestamp,
-            ) or changed
+            if numeric_strategy == "monotonic":
+                changed = merge_monotonic_int(
+                    profile, target, key, raw_value, sub_field, timestamp,
+                ) or changed
+            elif target.get(key) != raw_value:
+                target[key] = raw_value
+                changed = True
         elif isinstance(raw_value, str):
             value: Any = clean_fact_text(raw_value, sub_field)
             if target.get(key) != value:
@@ -572,7 +580,12 @@ def apply_patch(profile: dict[str, Any], patch: Any) -> dict[str, Any]:
             ) or changed
         if "resources" in account_patch:
             changed = merge_mapping_latest(
-                updated, updated["account"]["resources"], account_patch["resources"], "account.resources", timestamp,
+                updated,
+                updated["account"]["resources"],
+                account_patch["resources"],
+                "account.resources",
+                timestamp,
+                numeric_strategy="latest",
             ) or changed
         if "goals" in account_patch:
             changed = append_unique_text(
@@ -620,7 +633,8 @@ def command_update(args: argparse.Namespace) -> int:
         save_profile(profile, touch_updated_at=False)
     patch = json.loads(args.patch_json)
     updated = apply_patch(profile, patch)
-    save_profile(updated, touch_updated_at=False)
+    if updated != profile:
+        save_profile(updated, touch_updated_at=False)
     print_json(updated)
     return 0
 

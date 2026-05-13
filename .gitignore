@@ -28,6 +28,3 @@ dist/
 
 # Codex
 .codex/
-
-# uv lockfile
-uv.lock
