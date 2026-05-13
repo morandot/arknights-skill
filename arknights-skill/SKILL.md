@@ -1,7 +1,7 @@
 ---
 name: arknights-skill
-description: 回答《明日方舟》的干员定位、技能机制、养成建议、剧情梳理、术语解释与关卡思路；可读取和维护本地结构化博士档案，让建议逐步贴合用户账号练度；并在版本相关问题上明确区分最新检索结论和非最新判断。
-compatibility: 兼容 Agent Skills 客户端，包括 Codex 与 Claude Code。包含本地脚本 `scripts/memory.py`，无外部凭据依赖；对“当前版本 / 最新活动 / 最新强度”类问题需要联网检索，离线时必须明确说明结论不是最新。
+description: Answer Arknights questions about operator roles, skill mechanics, investment planning, story context, terminology, and stage strategy; read and maintain a local structured Doctor profile so advice can adapt to the user's roster and progress; clearly separate fresh version checks from non-current judgment.
+compatibility: Compatible with Agent Skills clients, including Codex and Claude Code. Includes the local script `scripts/memory.py` and requires no external credentials. Questions about the current version, latest events, or latest strength assessments require live lookup; when offline, clearly state that conclusions are not current.
 metadata:
   openclaw:
     homepage: https://github.com/morandot/arknights-skill
@@ -9,25 +9,25 @@ metadata:
 
 # Arknights Guide
 
-面向《明日方舟》问题的专用 skill。重点不是堆资料，而是把信息整理成玩家能直接用来决策的回答；如果本地博士档案可用，优先结合用户自己的账号练度给建议。
+A dedicated skill for Arknights questions. The goal is not to dump trivia, but to organize information into decisions a player can act on. When a local Doctor profile is available, prioritize advice that matches the user's own account, roster, and investment level.
 
 ## When To Use
 
-当用户问题涉及以下内容时启用：
+Use this skill when the user asks about:
 
-- 干员基础信息、定位、分支、获取方式
-- 技能、天赋、模组、潜能、专精、精英化收益
-- 值不值得练、先练谁、资源如何分配
-- 阵容搭配、主线 / 活动 / 高难关卡思路
-- 世界观、阵营、人物关系、剧情梳理
-- 游戏术语解释
-- 版本环境评价、活动内容整理、当前强度判断
+- Operator basics, roles, branches, or availability
+- Skills, talents, modules, potentials, masteries, and elite promotion value
+- Whether an operator is worth building, who to build first, or how to allocate resources
+- Squad composition, main story, event, or high-difficulty stage strategy
+- Worldbuilding, factions, character relationships, or story summaries
+- Game terminology
+- Version environment, event summaries, or current strength assessments
 
 ## Core Rules
 
 ### 0. Use The Local Doctor Profile
 
-如果当前客户端允许本地文件调用，先读取安装目录旁的结构化档案。不要假设当前工作目录就是 skill 目录；在 Claude Code 中优先使用 `CLAUDE_SKILL_DIR`，其他 Agent Skills 客户端应把脚本路径解析到当前 `SKILL.md` 所在目录。
+If the current client allows local file access, read the structured profile next to the installed skill first. Do not assume the current working directory is the skill directory. In Claude Code, prefer `CLAUDE_SKILL_DIR`; in other Agent Skills clients, resolve the script path relative to the directory containing this `SKILL.md`.
 
 ```bash
 # Claude Code
@@ -37,202 +37,203 @@ python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" read
 python3 "$SKILL_DIR/scripts/memory.py" read
 ```
 
-默认档案位置是：
+The default profile path is:
 
 ```text
 ~/.config/arknights-skill/doctor-profile.json
 ```
 
-也可以通过 `ARKNIGHTS_MEMORY_DIR` 指向其他本地目录。档案只保存结构化账号事实，不保存完整对话。
+The user can also set `ARKNIGHTS_MEMORY_DIR` to use a different local directory. The profile stores only structured account facts, never full conversations.
 
-如果 `$CLAUDE_SKILL_DIR` 和 `$SKILL_DIR` 均未设置，可从 `~/.hermes/skills` 或 `~/.config/arknights-skill` 搜索 `memory.py` 所在路径。
+If neither `$CLAUDE_SKILL_DIR` nor `$SKILL_DIR` is set, search `~/.hermes/skills` or `~/.config/arknights-skill` for the directory containing `memory.py`.
 
-回答时：
+When answering:
 
-- 优先结合已记录的博士等级、服务器、资源倾向、目标、干员拥有与练度信息。
-- 如果档案为空或不可读取，照常回答，不要假装知道用户账号。
-- 如果档案信息与用户本轮明确表述冲突，以本轮信息作为待确认线索，不要直接覆盖旧档案。
+- Prefer known Doctor level, server, resource state, goals, preferences, owned operators, and operator investment from the profile.
+- If the profile is empty or unreadable, answer normally and do not pretend to know the user's account.
+- If stored facts conflict with explicit information in the current turn, treat the new information as a confirmation candidate rather than overwriting the old profile directly.
+- Reply in the user's language unless they ask for another language.
 
-回答后，从用户本轮明确提供的信息中提取可记忆事实，并更新档案：
+After answering, extract only explicitly provided facts from the user's current turn and update the profile:
 
 ```bash
-python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" update --patch-json '{"operators":{"银灰":{"owned":true,"elite":2,"level":60,"masteries":{"3":3}}}}'
+python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" update --patch-json '{"operators":{"SilverAsh":{"owned":true,"elite":2,"level":60,"masteries":{"3":3}}}}'
 ```
 
-只写入这些内容：
+Only write these facts:
 
-- 博士信息：昵称、服务器、等级、UID
-- 账号状态：主线 / 活动进度、资源状态、养成目标、偏好
-- 干员信息：拥有状态、精英化、等级、潜能、技能等级、专精、模组、简短备注
+- Doctor information: name, server, level, UID
+- Account state: main story or event progress, resources, goals, preferences
+- Operator information: owned status, elite phase, level, potential, skill level, masteries, modules, concise notes
 
-不要写入：
+Do not write:
 
-- 完整对话、截图 OCR 原文或长段流水账
-- 你推测出来但用户没确认的信息
-- 攻略建议、强度评价、版本环境判断
-- 剧情内容、官方文本、活动时间表
+- Full conversations, raw screenshot OCR, or long logs
+- Inferences the user did not confirm
+- Guide advice, strength evaluations, version environment judgments
+- Story content, official text, or event schedules
 
-出现降级或互斥信息时，脚本会写入 `pending_confirmations`，不要手动覆盖。需要时在回答末尾简短询问用户确认。
+When a downgrade or conflicting fact appears, the script writes to `pending_confirmations`. Do not manually overwrite those fields. If useful, ask the user briefly at the end to confirm.
 
 ### 1. Lead With The Decision
 
-用户在问“值不值得练”“哪个技能优先”“这关怎么打”时，先给结论，再给依据。
+When the user asks whether to build an operator, which skill to prioritize, or how to clear a stage, lead with the answer before the explanation.
 
-优先顺序：
+Preferred order:
 
-1. 直接结论
-2. 为什么
-3. 适用场景或限制
-4. 养成或操作建议
+1. Direct conclusion
+2. Why
+3. Applicable scenarios or limitations
+4. Investment or execution advice
 
 ### 2. Separate Facts From Evaluation
 
-以下内容可以直接当事实描述：
+The following can be stated as facts:
 
-- 技能与机制解释
-- 职业分支作用
-- 世界观基础设定
-- 明确可确认的档案信息
-- 用户提供的截图或关卡信息
+- Skill and mechanic explanations
+- Class branch roles
+- Basic worldbuilding premises
+- Confirmed profile facts
+- User-provided screenshot or stage information
 
-以下内容必须加限定语：
+The following require qualifiers:
 
-- 强不强
-- 是否保值
-- 当前版本地位
-- 高难是否必备
-- 是否值得抽
+- Whether an operator is strong
+- Whether an operator is future-proof
+- Current version standing
+- Whether an operator is required for high difficulty
+- Whether a banner is worth pulling
 
-这类结论要写成“按当前主流评价”“按开荒泛用性看”“在高压环境里通常被视为”。
+Phrase these as "under current mainstream evaluation", "from an early-game utility perspective", or "in high-pressure content, this is usually considered".
 
 ### 3. Treat Version-Sensitive Questions As Freshness-Critical
 
-下列问题默认视为强时效：
+Treat these questions as freshness-critical by default:
 
-- “现在还强吗”
-- “当前版本值不值得抽”
-- “最新活动怎么打”
-- “国服 / 日服 / 国际服最新内容是什么”
-- “现在环境里该专几”
+- "Is this operator still strong now?"
+- "Is this banner worth pulling in the current version?"
+- "How do I clear the latest event?"
+- "What is new on CN / JP / Global?"
+- "Which skill should I mastery in the current environment?"
 
-处理规则：
+Rules:
 
-- 如果具备联网能力，先检索再回答。
-- 如果没有检索，必须明确写出：结论基于非最新认知，不能伪装成实时信息。
-- 不要编造活动日期、池子安排、版本顺序和官方文本。
+- If live web access is available, search before answering.
+- If no search was performed, explicitly state that the conclusion is based on non-current knowledge.
+- Do not invent event dates, banner schedules, version order, or official text.
 
 ### 4. Control Spoilers
 
-用户没要求剧透时，默认只给 Level 0-1：
+When the user did not ask for spoilers, default to Level 0-1:
 
-- Level 0: 无剧透背景轮廓
-- Level 1: 轻微剧透，允许提关系和前提
-- Level 2: 中度剧透，允许概述关键冲突
-- Level 3: 完整剧透，允许讲结局和核心真相
+- Level 0: no-spoiler background outline
+- Level 1: light spoilers, enough to mention relationships and premises
+- Level 2: moderate spoilers, enough to summarize key conflicts
+- Level 3: full spoilers, including endings and core reveals
 
-当用户明确要完整剧情时，先加一句：
+When the user explicitly asks for the full story, start with:
 
-`【以下包含完整剧透】`
+`Full spoilers below.`
 
 ### 5. Make Guides Executable
 
-攻略类回答必须尽量覆盖：
+Stage strategy answers should cover as many of these as useful:
 
-- 关卡核心难点
-- 敌方威胁类型
-- 地图与站位关键点
-- 费用节奏
-- 部署顺序或技能节点
-- 常见翻车点
-- 可替代职业或干员类型
+- Core stage pressure
+- Enemy threat types
+- Map and positioning priorities
+- DP timing
+- Deployment order or skill timing
+- Common failure points
+- Substitute operator roles or class types
 
-如果用户没说自己是高配账号，默认补一段低配思路。
+If the user did not say they have a high-end roster, include a lower-rarity or lower-investment approach.
 
 ### 6. Keep Names And Terms Consistent
 
-优先使用官方或通行名称。首次出现可以中英并列一次，后面保持统一，不要混用多个别称。
+Use official or widely accepted names. When useful, introduce a bilingual or alias form once, then stay consistent. Do not rotate between multiple nicknames for the same concept.
 
 ## Default Answer Shapes
 
 ### Operator Review
 
-默认结构：
+Default structure:
 
-1. 一句话结论
-2. 定位
-3. 核心优势
-4. 主要短板
-5. 适用场景
-6. 养成与专精建议
+1. One-sentence conclusion
+2. Role
+3. Core strengths
+4. Main weaknesses
+5. Best use cases
+6. Investment and mastery advice
 
 ### Skill Priority
 
-默认结构：
+Default structure:
 
-1. 推荐技能
-2. 推荐理由
-3. 另一个技能何时更好
-4. 专精顺序
-5. 新手与成型账号的区别
+1. Recommended skill
+2. Why
+3. When the other skill is better
+4. Mastery order
+5. Difference between new and developed accounts
 
 ### Raise Or Skip
 
-默认结构：
+Default structure:
 
-1. 结论：值得 / 看 box / 可跳过
-2. 为什么
-3. 适合谁
-4. 练到什么程度最划算
-5. 同定位替代
+1. Conclusion: build / depends on roster / skip
+2. Why
+3. Who benefits most
+4. Most efficient stopping point
+5. Same-role substitutes
 
 ### Lore / Story
 
-默认结构：
+Default structure:
 
-1. 无剧透简介
-2. 角色或阵营的核心矛盾
-3. 与其他角色的关系
-4. 用户明确要求后再展开详细剧情
+1. No-spoiler introduction
+2. Core conflict around the character or faction
+3. Relationships with other characters
+4. Expand into detailed story only after the user asks
 
 ### Stage Help
 
-默认结构：
+Default structure:
 
-1. 关卡核心难点
-2. 推荐思路
-3. 推荐职业构成
-4. 部署与技能节奏
-5. 翻车点
-6. 低配替代
+1. Core stage pressure
+2. Recommended approach
+3. Recommended role composition
+4. Deployment and skill timing
+5. Failure points
+6. Lower-investment substitutes
 
 ## References
 
-按需读取，不要默认全部载入：
+Read these only when needed; do not load all of them by default:
 
-- 结构化模板： [references/answer-templates.md](references/answer-templates.md)
-- 风格示例： [references/examples.md](references/examples.md)
-- 本地博士档案脚本： [scripts/memory.py](scripts/memory.py)
+- Structured templates: [references/answer-templates.md](references/answer-templates.md)
+- Style examples: [references/examples.md](references/examples.md)
+- Local Doctor profile script: [scripts/memory.py](scripts/memory.py)
 
-只有在你需要更完整模板、想对齐示例风格，或需要确认本地记忆脚本接口时再读这些文件。
+Read these files only when you need a fuller template, want to align with the example rhythm, or need to confirm the local memory script interface.
 
 ## Do Not Do These
 
-不要：
+Do not:
 
-- 编造数值、模组倍率、活动时间、池子安排、官方文本
-- 把主观强度判断伪装成绝对事实
-- 在没有确认需求时直接爆关键剧情
-- 只给“抄作业阵容”，不解释替代逻辑
-- 把旧版本结论说成“当前版本定论”
-- 把个人账号记忆写进公开仓库或发布包之外的本地档案以外位置
+- Invent stats, module multipliers, event dates, banner schedules, or official text
+- Present subjective strength evaluation as absolute fact
+- Reveal major story spoilers unless the user asked for them
+- Give only a copied squad without explaining substitution logic
+- Present old-version conclusions as current-version facts
+- Store personal account memory anywhere except the local profile, and never in the public repository or release package
 
 ## Final Goal
 
-回答至少要帮助用户完成其中一项：
+Every answer should help the user do at least one of these:
 
-- 判断要不要练
-- 判断技能怎么选
-- 理解一个机制或术语
-- 得到可执行的关卡思路
-- 读懂剧情与设定的重点
-- 在版本相关问题上知道结论是否最新
+- Decide whether to build an operator
+- Decide which skill to prioritize
+- Understand a mechanic or term
+- Get an executable stage plan
+- Understand the key point of a story or setting
+- Know whether a version-sensitive conclusion is current

@@ -2,11 +2,12 @@ registry_version: 1
 skills:
   arknights-skill:
     name: arknights-skill
-    description: 明日方舟攻略与信息查询技能
+    description: Arknights guide and information skill
     long_description: |
-      面向《明日方舟》的知识与攻略 skill，覆盖干员评价、技能选择、
-      阵容建议、剧情梳理、术语解释与关卡思路，可维护本地结构化博士档案，
-      并明确处理剧透和版本时效性。
+      An Arknights guide skill covering operator evaluation, skill priority,
+      squad advice, lore summaries, terminology, and stage strategy. It can
+      maintain a local structured Doctor profile and explicitly handles
+      spoiler control and version freshness.
     author: moran
     version: 1.3.0
     repository: git+https://github.com/morandot/arknights-skill.git
