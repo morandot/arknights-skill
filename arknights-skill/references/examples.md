@@ -1,90 +1,90 @@
 # Style Examples
 
-这些例子只用来对齐回答节奏，不要照抄具体结论。
+These examples are for answer rhythm only. Do not copy the specific conclusions blindly.
 
-## 示例 1：干员值不值得练
+## Example 1: Whether An Operator Is Worth Building
 
 ```text
-结论：
-值得练，属于高泛用核心输出，精二后的提升比较关键。
+Conclusion:
+Worth building. This operator is a high-utility core damage dealer, and Elite 2 is a meaningful breakpoint.
 
-定位：
-地面物理输出兼爆发决战位，核心价值在于技能开启后的大范围清场。
+Role:
+Ground physical DPS with burst potential. Their main value comes from wide-area cleanup during skill uptime.
 
-优势：
-- 爆发强，能处理成群中高压敌人
-- 覆盖范围大，站位容错高
-- 主线和活动图都有稳定发挥
+Strengths:
+- Strong burst against grouped medium-pressure enemies
+- Large coverage area and forgiving positioning
+- Reliable performance in main story and event stages
 
-短板：
-- 依赖技能期
-- 真空期需要队友补足
+Weaknesses:
+- Depends heavily on skill uptime
+- Needs teammates to cover downtime
 
-养成建议：
-优先精二；资源够的话优先提升核心技能专精。
+Investment advice:
+Prioritize Elite 2. If resources allow, improve the core skill's mastery first.
 ```
 
-## 示例 2：术语解释
+## Example 2: Terminology
 
 ```text
-定义：
-暖机指干员需要一段时间叠层、蓄力或进入技能循环后，强度才会完整展开。
+Definition:
+Warm-up means an operator needs time to stack, charge, or enter a stable skill cycle before reaching full strength.
 
-实战意义：
-前期可能偏弱，中后期会明显变强。
+Practical meaning:
+They may feel weaker early, then become noticeably stronger in the mid or late stage.
 
-例子：
-需要叠攻击、叠召唤物或等待循环稳定的干员。
+Example:
+Operators that need to stack attack, build summons, or wait for a stable cycle.
 
-容易混淆：
-暖机不等于弱，很多干员只是强势期来得比较晚。
+Common confusion:
+Warm-up does not mean weak. Many warm-up operators simply reach their power window later.
 ```
 
-## 示例 3：关卡思路
+## Example 3: Stage Strategy
 
 ```text
-关卡核心难点：
-- 前期费用紧
-- 中后期有高防敌人与飞行单位同时施压
+Core stage pressure:
+- Tight early DP
+- Mid-to-late waves pressure both high-defense lanes and aerial threats
 
-推荐思路：
-先稳住回费和对空，再准备中路持续输出，最后留一个爆发技能处理高压波次。
+Recommended approach:
+Stabilize DP and anti-air first, prepare sustained damage for the center lane, then save one burst skill for the pressure wave.
 
-低配替代：
-这里真正的核心需求是稳定对空和中路持续群伤，不一定非要绑定某个六星。
+Lower-investment substitute:
+The real requirement is stable anti-air plus sustained AoE or multi-target damage in the center lane. It does not have to be a specific 6-star operator.
 ```
 
-## 示例 4：技能选择
+## Example 4: Skill Priority
 
 ```text
-推荐：
-优先二技能。
+Recommendation:
+Prioritize Skill 2.
 
-原因：
-- 启动更快，泛用性更高
-- 在主线和大多数活动图里更容易稳定吃到收益
+Why:
+- Faster startup and better general use
+- Easier to get consistent value in main story and most event stages
 
-另一个技能什么时候更好：
-- 如果你更看重爆发上限，或者队伍已经能稳定保轴，可以考虑三技能
+When the other skill is better:
+- Consider Skill 3 if you care more about burst ceiling or already have a team that can support its timing
 
-专精建议：
-- 常规账号先专二技能
-- 已有成熟阵容、追求高压表现时再补三技能
+Mastery advice:
+- Standard accounts should master Skill 2 first
+- Developed accounts chasing high-pressure performance can add Skill 3 later
 ```
 
-## 示例 5：剧情介绍
+## Example 5: Lore Introduction
 
 ```text
-无剧透简介：
-这个角色的魅力不只在战斗定位，更在于身份、立场和选择之间的拉扯。
+No-spoiler introduction:
+This character's appeal is not just combat role, but the tension between identity, responsibility, and choice.
 
-核心设定：
-- 她 / 他属于某个关键阵营
-- 与另一名角色存在重要的价值观对照
+Core premise:
+- They belong to a key faction
+- They mirror or contrast another important character's values
 
-关系与主题：
-- 表面上是职责冲突，实际更接近信念冲突
-- 角色主题通常围绕责任、代价和自我认同展开
+Relationships and theme:
+- On the surface, the conflict is about duty; underneath, it is closer to a conflict of beliefs
+- The character theme usually revolves around responsibility, cost, and self-definition
 
-如果你想继续，我可以再展开档案内容和完整剧情线，剧透等级会一起标明。
+If you want to continue, I can expand into profile material and the full story route, with spoiler level clearly marked.
 ```

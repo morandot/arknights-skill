@@ -1,59 +1,59 @@
 # Arknights Skill
 
-[English](./README.en.md)
+[Chinese](./README.zh-CN.md)
 
-一个面向《明日方舟》的 Agent Skill，用来回答干员定位、技能机制、养成规划、剧情梳理、术语解释和关卡思路。
+An Agent Skill for **Arknights** that helps answer operator evaluation, skill priority, progression planning, lore questions, terminology, and stage strategy.
 
-> 非官方项目。  
-> 不内置游戏数据库，不替代实时 wiki 或计算器。
-> 可在本地维护结构化博士档案；不保存完整对话，不上传账号信息。
+> Unofficial project.
+> It does not bundle a game database and does not replace a live wiki or calculator.
+> It can maintain a local structured Doctor profile; it does not save full conversations or upload account data.
 
-## 适合什么场景
+## Typical Use Cases
 
-- “这个干员值不值得练？”
-- “这个角色一二三技能该专哪个？”
-- “我新手资源有限，应该先练谁？”
-- “这关怎么打，有没有低配思路？”
-- “这个角色的背景故事是什么，先别剧透太多”
-- “法蒸、暖机、轴、对策卡是什么意思？”
-- “现在这个干员在当前版本还强吗？”
+- “Is this operator worth building?”
+- “Which skill should I mastery first?”
+- “I’m a new player with limited resources. Who should I build first?”
+- “How do I clear this stage? Any low-end substitutes?”
+- “What is this character’s backstory? Keep spoilers light.”
+- “What do terms like warm-up, cycle, or tech card mean?”
+- “Is this operator still strong in the current version?”
 
-完整规则见 [arknights-skill/SKILL.md](./arknights-skill/SKILL.md)。
+See [arknights-skill/SKILL.md](./arknights-skill/SKILL.md) for the full instruction set.
 
-## 本地账号记忆
+## Local Account Memory
 
-安装后，skill 可在 `~/.config/arknights-skill/doctor-profile.json` 维护本地博士档案，记录用户明确提供的博士等级、资源倾向、干员拥有与练度等结构化信息。该路径与 skill 安装目录独立，更新或重装 skill 不会影响档案数据。
+After installation, the skill maintains a local Doctor profile at `~/.config/arknights-skill/doctor-profile.json`. It stores structured facts explicitly provided by the user, such as Doctor level, resource priorities, owned operators, and operator investment. This path is independent of the skill install directory, so skill updates or reinstalls do not affect profile data.
 
-该能力需要 Agent 客户端支持本地文件访问和 Python 脚本执行；不支持时会退化为普通问答。
+This feature requires the Agent client to support local file access and Python script execution. Without that, the skill still works as a normal guide.
 
-## 安装
+## Installation
 
-### 直接让你的 Agent 安装
+### Ask Your Agent To Install It
 
-直接把下面这句话发给你的 agent：
+Send this message to your agent:
 
 ```text
-请帮我安装 `arknights-skill`，来源仓库是 https://github.com/morandot/arknights-skill
+Install the skill `arknights-skill` from https://github.com/morandot/arknights-skill
 ```
 
-### 快速安装
+### Quick Install
 
 ```bash
 npx skills add https://github.com/morandot/arknights-skill --skill arknights-skill
 ```
 
-显式调用：
+Explicit invocation:
 
 ```text
 $arknights-skill
 ```
 
-更新直接把下面这句话发给你的 agent：
+To update to the latest version, you can also send this message to your agent:
 
 ```text
-请帮我把已安装的 `arknights-skill` 更新到最新版本，来源仓库是 https://github.com/morandot/arknights-skill
+Update my installed arknights-skill to the latest version from https://github.com/morandot/arknights-skill
 ```
 
 ## License
 
-仓库源码和文档采用 [MIT](./LICENSE)。
+Repository source and docs are licensed under [MIT](./LICENSE).

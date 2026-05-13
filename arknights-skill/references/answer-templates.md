@@ -1,148 +1,148 @@
 # Answer Templates
 
-按需选最接近用户问题的一种模板，不要机械照抄。
+Choose the template closest to the user's question when useful. Do not copy it mechanically.
 
-## 1. 干员简评
+## 1. Operator Review
 
 ```text
-结论：
-【值得练 / 看 box / 可跳过】。如果你缺【】, 这名干员的优先级会更高。
+Conclusion:
+[Worth building / depends on roster / skippable]. If your account lacks [role], this operator's priority is higher.
 
-定位：
-- 职业 / 分支：
-- 核心职责：
-- 常见用法：
+Role:
+- Class / branch:
+- Core job:
+- Common usage:
 
-优势：
+Strengths:
 - 
 - 
 
-短板：
+Weaknesses:
 - 
 - 
 
-适用场景：
+Best use cases:
 - 
 - 
 
-养成建议：
-- 推荐练度：
-- 是否建议精二：
-- 专精优先级：
+Investment advice:
+- Recommended level:
+- Elite 2 priority:
+- Mastery priority:
 
-一句话建议：
-【】
+One-line advice:
+[]
 ```
 
-## 2. 技能选择
+## 2. Skill Priority
 
 ```text
-推荐：
-优先【X技能】。
+Recommendation:
+Prioritize Skill [X].
 
-原因：
+Why:
 - 
 - 
 
-【Y技能】什么时候更好：
+When Skill [Y] is better:
 - 
 - 
 
-专精建议：
-- 专一收益：
-- 专二收益：
-- 专三收益：
-- 推荐停点：
+Mastery advice:
+- M1 value:
+- M2 value:
+- M3 value:
+- Recommended stopping point:
 
-结论：
-【】
+Conclusion:
+[]
 ```
 
-## 3. 值不值得练
+## 3. Raise Or Skip
 
 ```text
-结论：
-【值得 / 看 box / 可跳过】
+Conclusion:
+[Build / depends on roster / skip]
 
-为什么：
+Why:
 - 
 - 
 
-适合谁：
-- 新手 / 老玩家 / 高难账号 / 缺某类功能的账号
+Who benefits most:
+- New players / veteran accounts / high-difficulty accounts / accounts missing a specific role
 
-最划算的练度：
+Most efficient stopping point:
 - 
 
-同定位替代：
+Same-role substitutes:
 - 
 ```
 
-## 4. 剧情介绍
+## 4. Lore / Story
 
 ```text
-无剧透简介：
-【】
+No-spoiler introduction:
+[]
 
-核心设定：
+Core premise:
 - 
 - 
 
-与其他角色 / 阵营关系：
+Relationship with other characters / factions:
 - 
 - 
 
-角色主题：
-【】
+Character theme:
+[]
 
-如需深入，可继续展开档案、活动剧情和完整剧透线。
+If you want to go deeper, I can expand into files, event story, and full-spoiler plotlines.
 ```
 
-## 5. 关卡攻略
+## 5. Stage Strategy
 
 ```text
-关卡核心难点：
+Core stage pressure:
 - 
 - 
 
-推荐思路：
+Recommended approach:
 - 
 - 
 
-推荐阵容构成：
-- 回费：
-- 主输出：
-- 副输出：
-- 医疗：
-- 阻挡 / 承伤：
-- 功能位：
+Recommended role composition:
+- DP generation:
+- Main DPS:
+- Secondary DPS:
+- Healing:
+- Blocking / tanking:
+- Utility:
 
-操作重点：
+Execution notes:
 1. 
 2. 
 3. 
 
-常见翻车点：
+Common failure points:
 - 
 - 
 
-低配替代思路：
+Lower-investment substitute plan:
 - 
 - 
 ```
 
-## 6. 术语解释
+## 6. Terminology
 
 ```text
-定义：
-【】
+Definition:
+[]
 
-实战意义：
-【】
+Practical meaning:
+[]
 
-例子：
-【】
+Example:
+[]
 
-容易混淆：
-【】
+Common confusion:
+[]
 ```
