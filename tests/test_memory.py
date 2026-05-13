@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 from types import SimpleNamespace
+from unittest import mock
 
 import pytest
 
@@ -66,10 +67,23 @@ class TestMergeMonotonicInt:
         profile = self.memory.empty_profile()
         target: dict = {}
         self.memory.merge_monotonic_int(profile, target, "level", 60, "test.level", "t")
-        self.memory.merge_monotonic_int(profile, target, "level", 40, "test.level", "t")
+        changed = self.memory.merge_monotonic_int(profile, target, "level", 40, "test.level", "t")
+        assert changed is True
         assert target["level"] == 60
         assert len(profile["pending_confirmations"]) == 1
         assert profile["pending_confirmations"][0]["incoming"] == 40
+
+    def test_duplicate_downgrade_pending_is_not_a_change(self):
+        profile = self.memory.empty_profile()
+        target: dict = {}
+        self.memory.merge_monotonic_int(profile, target, "level", 60, "test.level", "t")
+        self.memory.merge_monotonic_int(profile, target, "level", 40, "test.level", "t")
+
+        changed = self.memory.merge_monotonic_int(profile, target, "level", 40, "test.level", "t")
+
+        assert changed is False
+        assert target["level"] == 60
+        assert len(profile["pending_confirmations"]) == 1
 
     def test_same_value_no_change(self):
         profile = self.memory.empty_profile()
@@ -191,7 +205,10 @@ class TestMergeMappingLatest:
 class TestApplyPatch:
     def test_full_operator_workflow(self):
         profile = self.memory.empty_profile()
-        p1 = self.memory.apply_patch(profile, {"operators": {"SilverAsh": {"owned": True, "elite": 2, "level": 50, "masteries": {"3": 3}}}})
+        p1 = self.memory.apply_patch(
+            profile,
+            {"operators": {"SilverAsh": {"owned": True, "elite": 2, "level": 50, "masteries": {"3": 3}}}},
+        )
         assert p1["operators"]["SilverAsh"]["elite"] == 2
         assert p1["operators"]["SilverAsh"]["masteries"]["3"] == 3
 
@@ -205,13 +222,28 @@ class TestApplyPatch:
         assert p1["doctor"]["name"] == "DoctorK"
         assert p1["doctor"]["level"] == 120
 
-    def test_account_resources_monotonic(self):
+    def test_account_resources_latest_value_wins(self):
         profile = self.memory.empty_profile()
         p1 = self.memory.apply_patch(profile, {"account": {"resources": {"lmd": 5000000}}})
         assert p1["account"]["resources"]["lmd"] == 5000000
         p2 = self.memory.apply_patch(p1, {"account": {"resources": {"lmd": 3000000}}})
-        assert p2["account"]["resources"]["lmd"] == 5000000
-        assert any(p["field"] == "account.resources.lmd" for p in p2["pending_confirmations"])
+        assert p2["account"]["resources"]["lmd"] == 3000000
+        assert not any(p["field"] == "account.resources.lmd" for p in p2["pending_confirmations"])
+
+    def test_duplicate_operator_downgrade_pending_does_not_refresh_metadata(self):
+        profile = self.memory.empty_profile()
+        p1 = self.memory.apply_patch(
+            profile,
+            {"operators": {"SilverAsh": {"owned": True, "elite": 2, "level": 50}}},
+        )
+        p2 = self.memory.apply_patch(p1, {"operators": {"SilverAsh": {"elite": 1, "level": 40}}})
+
+        p3 = self.memory.apply_patch(p2, {"operators": {"SilverAsh": {"elite": 1, "level": 40}}})
+
+        assert p3 == p2
+        pending_fields = [p["field"] for p in p3["pending_confirmations"]]
+        assert pending_fields.count("operators.SilverAsh.elite") == 1
+        assert pending_fields.count("operators.SilverAsh.level") == 1
 
 
 class TestSetNested:
@@ -288,6 +320,22 @@ class TestCommandRead:
         captured = capsys.readouterr()
         assert "pending confirmation" in captured.err
         assert "doctor.level" in captured.err
+
+
+class TestCommandUpdate:
+    def test_noop_update_does_not_save_again(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["doctor"]["level"] = 60
+        self.memory.save_profile(profile, touch_updated_at=False)
+
+        args = SimpleNamespace(patch_json=json.dumps({"doctor": {"level": 60}}))
+        with mock.patch.object(self.memory, "save_profile", wraps=self.memory.save_profile) as save_profile:
+            rc = self.memory.command_update(args)
+
+        assert rc == 0
+        assert save_profile.call_count == 0
+        captured = capsys.readouterr()
+        assert '"level": 60' in captured.out
 
 
 class TestMigration:
