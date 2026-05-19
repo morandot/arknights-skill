@@ -206,6 +206,16 @@ Default structure:
 5. Failure points
 6. Lower-investment substitutes
 
+## Agent Configuration (optional)
+
+`agents/openai.yaml` defines the Agent prompt configuration specific to this skill:
+
+- **`display_name` / `short_description`** — Display name and summary shown in the Agent skill list.
+- **`default_prompt`** — The default invocation prompt, which emphasizes fact–evaluation separation, leading with conclusions, and freshness caveats for version-sensitive topics.
+- **`policy.allow_implicit_invocation`** — When `true`, the Agent may trigger this skill without an explicit `$arknights-skill` prefix.
+
+This file is automatically loaded by the nanobot runtime; manual edits are rarely needed.
+
 ## References
 
 Read these only when needed; do not load all of them by default:
