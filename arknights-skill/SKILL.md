@@ -206,15 +206,26 @@ Default structure:
 5. Failure points
 6. Lower-investment substitutes
 
+## Agent Configuration (optional)
+
+`agents/openai.yaml` defines the Agent prompt configuration specific to this skill:
+
+- **`display_name` / `short_description`** — Display name and summary shown in the Agent skill list.
+- **`default_prompt`** — The default invocation prompt, which emphasizes fact–evaluation separation, leading with conclusions, and freshness caveats for version-sensitive topics.
+- **`policy.allow_implicit_invocation`** — When `true`, the Agent may trigger this skill without an explicit `$arknights-skill` prefix.
+
+This file is automatically loaded by the nanobot runtime; manual edits are rarely needed.
+
 ## References
 
 Read these only when needed; do not load all of them by default:
 
 - Structured templates: [references/answer-templates.md](references/answer-templates.md)
 - Style examples: [references/examples.md](references/examples.md)
+- Doctor profile schema: [references/doctor-profile-schema.md](references/doctor-profile-schema.md)
 - Local Doctor profile script: [scripts/memory.py](scripts/memory.py)
 
-Read these files only when you need a fuller template, want to align with the example rhythm, or need to confirm the local memory script interface.
+Read these files only when you need a fuller template, want to align with the example rhythm, need the profile schema reference, or need to confirm the local memory script interface.
 
 ## Do Not Do These
 
@@ -233,6 +244,11 @@ Every answer should help the user do at least one of these:
 
 - Decide whether to build an operator
 - Decide which skill to prioritize
+- Understand a mechanic or term
+- Get an executable stage plan
+- Understand the key point of a story or setting
+- Know whether a version-sensitive conclusion is current
+e
 - Understand a mechanic or term
 - Get an executable stage plan
 - Understand the key point of a story or setting
