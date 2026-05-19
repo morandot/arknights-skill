@@ -28,3 +28,4 @@ dist/
 
 # Codex
 .codex/
+.alma-snapshots
