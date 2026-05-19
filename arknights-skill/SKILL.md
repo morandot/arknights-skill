@@ -75,6 +75,16 @@ Do not write:
 
 When a downgrade or conflicting fact appears, the script writes to `pending_confirmations`. Do not manually overwrite those fields. If useful, ask the user briefly at the end to confirm.
 
+Pending confirmations can be resolved manually:
+
+```bash
+# Apply a pending downgrade / conflict
+python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" confirm --field "SilverAsh.elite" --apply
+
+# Dismiss (discard) a pending entry
+python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" dismiss --field "SilverAsh.elite"
+```
+
 ### 1. Lead With The Decision
 
 When the user asks whether to build an operator, which skill to prioritize, or how to clear a stage, lead with the answer before the explanation.
@@ -244,11 +254,6 @@ Every answer should help the user do at least one of these:
 
 - Decide whether to build an operator
 - Decide which skill to prioritize
-- Understand a mechanic or term
-- Get an executable stage plan
-- Understand the key point of a story or setting
-- Know whether a version-sensitive conclusion is current
-e
 - Understand a mechanic or term
 - Get an executable stage plan
 - Understand the key point of a story or setting
