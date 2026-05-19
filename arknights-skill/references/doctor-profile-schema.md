@@ -112,7 +112,7 @@ Each value:
 | `owned` | boolean | `true` / `false` / `null` | Whether the Doctor owns this operator. |
 | `elite` | integer or null | `0`, `1`, `2`, `null` | Elite phase. |
 | `level` | integer or null | `≥ 1`, `null` | Current level within the current elite phase. |
-| `potential` | integer or null | `0–6`, `null` | Potential level. |
+| `potential` | integer or null | `1–6`, `null` | Potential level. |
 | `skill_level` | integer or null | `1–7`, `null` | Skill rank. |
 | `masteries` | object | `{ "skill_id": 0–3 }` | Per-skill mastery level. `skill_id` is `"1"`, `"2"`, or `"3"`. |
 | `modules` | object | `{ "module_id": true/false }` | Module unlock status. |
