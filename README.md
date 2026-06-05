@@ -36,10 +36,26 @@ Send this message to your agent:
 Install the skill `arknights-skill` from https://github.com/morandot/arknights-skill
 ```
 
-### Quick Install
+### Platform-Specific Install
 
+**Hermes:**
+```bash
+skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill
+```
+
+**Claude Code:**
+```text
+Install the skill `arknights-skill` from https://github.com/morandot/arknights-skill
+```
+
+**Codex / OpenClaw:**
 ```bash
 npx skills add https://github.com/morandot/arknights-skill --skill arknights-skill
+```
+
+**Shell (manual):**
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/install.sh)"
 ```
 
 Explicit invocation:
@@ -48,11 +64,23 @@ Explicit invocation:
 $arknights-skill
 ```
 
-To update to the latest version, you can also send this message to your agent:
+### Updating
+
+To update to the latest version, send this message to your agent:
 
 ```text
 Update my installed arknights-skill to the latest version from https://github.com/morandot/arknights-skill
 ```
+
+Or run manually:
+
+```bash
+bash ~/.hermes/skills/research/arknights-skill/update.sh
+```
+
+## Quick Start
+
+See [arknights-skill/references/quickstart.md](./arknights-skill/references/quickstart.md) for a step-by-step guide.
 
 ## License
 

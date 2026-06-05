@@ -627,12 +627,154 @@ def command_read(_: argparse.Namespace) -> int:
     return 0
 
 
+def _format_operator_summary(name: str, op: dict[str, Any], pending_fields: set[str]) -> str:
+    """Format a single operator as a one-line summary."""
+    owned = op.get("owned")
+    status = "owned" if owned is True else ("not owned" if owned is False else "unknown")
+    elite = op.get("elite")
+    elite_str = f"E{elite}" if elite is not None else ""
+    level = op.get("level")
+    level_str = f"Lv{level}" if level is not None else ""
+
+    masteries = op.get("masteries", {})
+    mastery_parts = sorted(masteries.items())
+    mastery_str = " ".join(f"S{k}:M{v}" for k, v in mastery_parts if v)
+
+    modules = op.get("modules", {})
+    module_count = sum(1 for v in modules.values() if v and v > 0)
+    module_str = f"{module_count}mod" if module_count else ""
+
+    pending_marker = " [pending]" if any(f.startswith(f"operators.{name}.") for f in pending_fields) else ""
+
+    parts = [name, status]
+    if elite_str:
+        parts.append(elite_str)
+    if level_str:
+        parts.append(level_str)
+    if mastery_str:
+        parts.append(mastery_str)
+    if module_str:
+        parts.append(module_str)
+    if pending_marker:
+        parts.append(pending_marker)
+    return " | ".join(parts)
+
+
+def _matching_operators(profile: dict[str, Any], *, owned_only: bool, pending_only: bool) -> list[str]:
+    """Return sorted operator names matching the given filters."""
+    operators = profile.get("operators", {})
+    pending_fields = {p["field"] for p in profile.get("pending_confirmations", [])}
+    result = []
+    for name, op in operators.items():
+        if owned_only and op.get("owned") is not True:
+            continue
+        if pending_only and not any(f.startswith(f"operators.{name}.") for f in pending_fields):
+            continue
+        result.append(name)
+    return sorted(result)
+
+
+def command_list(args: argparse.Namespace) -> int:
+    profile, created = load_profile()
+    if created:
+        save_profile(profile, touch_updated_at=False)
+    pending_fields = {p["field"] for p in profile.get("pending_confirmations", [])}
+    names = _matching_operators(profile, owned_only=args.owned, pending_only=args.has_pending)
+    if not names:
+        print("No operators recorded." if not args.owned else "No owned operators recorded.")
+        return 0
+    for name in names:
+        print(_format_operator_summary(name, profile["operators"][name], pending_fields))
+    return 0
+
+
+def command_search(args: argparse.Namespace) -> int:
+    profile, created = load_profile()
+    if created:
+        save_profile(profile, touch_updated_at=False)
+    keyword = args.keyword.lower()
+    operators = profile.get("operators", {})
+    pending_fields = {p["field"] for p in profile.get("pending_confirmations", [])}
+    matched = []
+    for name, op in operators.items():
+        if keyword in name.lower():
+            matched.append((name, op))
+            continue
+        for note in op.get("notes", []):
+            if keyword in str(note).lower():
+                matched.append((name, op))
+                break
+    if not matched:
+        print("No operators matched.")
+        return 0
+    for name, op in sorted(matched, key=lambda x: x[0]):
+        print(_format_operator_summary(name, op, pending_fields))
+    return 0
+
+
+def command_delete_operator(args: argparse.Namespace) -> int:
+    profile, created = load_profile()
+    if created:
+        save_profile(profile, touch_updated_at=False)
+    name = args.name
+    if name not in profile.get("operators", {}):
+        print(f"No operator '{name}' found.", file=sys.stderr)
+        return 1
+    del profile["operators"][name]
+    prefix = f"operators.{name}."
+    profile["pending_confirmations"] = [
+        p for p in profile.get("pending_confirmations", [])
+        if not p.get("field", "").startswith(prefix)
+    ]
+    save_profile(profile)
+    print(f"Deleted operator '{name}'.")
+    return 0
+
+
+def command_gc(args: argparse.Namespace) -> int:
+    profile, created = load_profile()
+    if created:
+        save_profile(profile, touch_updated_at=False)
+    dry_run = getattr(args, "dry_run", False)
+    threshold = now_utc()
+    cutoff_days = args.days
+
+    kept = []
+    removed = 0
+    for item in profile.get("pending_confirmations", []):
+        observed = item.get("observed_at", "")
+        try:
+            obs_dt = datetime.fromisoformat(observed.replace("Z", "+00:00"))
+            thr_dt = datetime.fromisoformat(threshold.replace("Z", "+00:00"))
+            age = (thr_dt - obs_dt).days
+        except (ValueError, TypeError):
+            kept.append(item)
+            continue
+        if age > cutoff_days:
+            removed += 1
+        else:
+            kept.append(item)
+
+    if dry_run:
+        print(f"Dry run: would remove {removed} stale pending confirmation(s).")
+        return 0
+
+    profile["pending_confirmations"] = kept
+    save_profile(profile)
+    print(f"Removed {removed} stale pending confirmation(s).")
+    return 0
+
+
 def command_update(args: argparse.Namespace) -> int:
     profile, created = load_profile()
     if created:
         save_profile(profile, touch_updated_at=False)
     patch = json.loads(args.patch_json)
     updated = apply_patch(profile, patch)
+    dry_run = getattr(args, "dry_run", False)
+    if dry_run:
+        print_json(updated)
+        return 0
     if updated != profile:
         save_profile(updated, touch_updated_at=False)
     print_json(updated)
@@ -703,6 +845,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     update_parser = subparsers.add_parser("update", help="Merge a structured patch into the doctor profile.")
     update_parser.add_argument("--patch-json", required=True, help="Structured JSON facts to merge.")
+    update_parser.add_argument("--dry-run", action="store_true", help="Preview merged result without saving.")
     update_parser.set_defaults(func=command_update)
 
     confirm_parser = subparsers.add_parser("confirm", help="Apply a pending confirmation.")
@@ -713,6 +856,26 @@ def build_parser() -> argparse.ArgumentParser:
     dismiss_parser = subparsers.add_parser("dismiss", help="Discard a pending confirmation.")
     dismiss_parser.add_argument("--field", required=True, help="Field name of the pending confirmation.")
     dismiss_parser.set_defaults(func=command_dismiss)
+
+    list_parser = subparsers.add_parser("list", help="List recorded operators.")
+    list_parser.add_argument("--owned", action="store_true", help="Show only owned operators.")
+    list_parser.add_argument(
+        "--has-pending", action="store_true", help="Show only operators with pending confirmations."
+    )
+    list_parser.set_defaults(func=command_list)
+
+    search_parser = subparsers.add_parser("search", help="Search operators by name or notes.")
+    search_parser.add_argument("keyword", help="Search keyword (case-insensitive).")
+    search_parser.set_defaults(func=command_search)
+
+    delete_parser = subparsers.add_parser("delete-operator", help="Delete a recorded operator.")
+    delete_parser.add_argument("name", help="Operator name to delete.")
+    delete_parser.set_defaults(func=command_delete_operator)
+
+    gc_parser = subparsers.add_parser("gc", help="Remove stale pending confirmations.")
+    gc_parser.add_argument("--days", type=int, default=30, help="Remove entries older than N days (default: 30).")
+    gc_parser.add_argument("--dry-run", action="store_true", help="Preview what would be removed.")
+    gc_parser.set_defaults(func=command_gc)
 
     return parser
 

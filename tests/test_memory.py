@@ -376,6 +376,272 @@ class TestMigration:
         assert not new_path.exists()
 
 
+class TestCommandList:
+    def test_list_all_operators(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["operators"] = {
+            "SilverAsh": self.memory.default_operator("t"),
+            "Exusiai": self.memory.default_operator("t"),
+        }
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(owned=False, has_pending=False)
+        rc = self.memory.command_list(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "SilverAsh" in captured.out
+        assert "Exusiai" in captured.out
+
+    def test_list_owned_filter(self, capsys):
+        profile = self.memory.empty_profile()
+        op1 = self.memory.default_operator("t")
+        op1["owned"] = True
+        op2 = self.memory.default_operator("t")
+        op2["owned"] = False
+        profile["operators"] = {"SilverAsh": op1, "Exusiai": op2}
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(owned=True, has_pending=False)
+        rc = self.memory.command_list(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "SilverAsh" in captured.out
+        assert "Exusiai" not in captured.out
+
+    def test_list_has_pending_filter(self, capsys):
+        profile = self.memory.empty_profile()
+        op1 = self.memory.default_operator("t")
+        op1["owned"] = True
+        profile["operators"] = {"SilverAsh": op1}
+        profile["pending_confirmations"] = [
+            {"field": "operators.SilverAsh.elite", "current": 2, "incoming": 1, "reason": "test", "observed_at": "t"},
+        ]
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(owned=False, has_pending=True)
+        rc = self.memory.command_list(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "SilverAsh" in captured.out
+
+    def test_list_empty_profile(self, capsys):
+        profile = self.memory.empty_profile()
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(owned=False, has_pending=False)
+        rc = self.memory.command_list(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "No operators" in captured.out
+
+    def test_list_operator_with_mastery(self, capsys):
+        profile = self.memory.empty_profile()
+        op = self.memory.default_operator("t")
+        op["owned"] = True
+        op["elite"] = 2
+        op["masteries"] = {"3": 3, "1": 1}
+        profile["operators"] = {"SilverAsh": op}
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(owned=False, has_pending=False)
+        rc = self.memory.command_list(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "SilverAsh" in captured.out
+        assert "E2" in captured.out
+        assert "S3:M3" in captured.out
+
+
+class TestCommandSearch:
+    def test_search_by_name(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["operators"] = {
+            "SilverAsh": self.memory.default_operator("t"),
+            "Exusiai": self.memory.default_operator("t"),
+        }
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(keyword="silver")
+        rc = self.memory.command_search(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "SilverAsh" in captured.out
+        assert "Exusiai" not in captured.out
+
+    def test_search_case_insensitive(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["operators"] = {"SilverAsh": self.memory.default_operator("t")}
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(keyword="SILVER")
+        rc = self.memory.command_search(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "SilverAsh" in captured.out
+
+    def test_search_in_notes(self, capsys):
+        profile = self.memory.empty_profile()
+        op = self.memory.default_operator("t")
+        op["notes"] = ["main tank for boss fights"]
+        profile["operators"] = {"Saria": op}
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(keyword="tank")
+        rc = self.memory.command_search(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "Saria" in captured.out
+
+    def test_search_no_results(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["operators"] = {"SilverAsh": self.memory.default_operator("t")}
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(keyword="nonexistent")
+        rc = self.memory.command_search(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "No operators" in captured.out
+
+    def test_search_empty_profile(self, capsys):
+        profile = self.memory.empty_profile()
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(keyword="test")
+        rc = self.memory.command_search(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "No operators" in captured.out
+
+
+class TestCommandDeleteOperator:
+    def test_delete_existing_operator(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["operators"] = {
+            "SilverAsh": self.memory.default_operator("t"),
+            "Exusiai": self.memory.default_operator("t"),
+        }
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(name="SilverAsh")
+        rc = self.memory.command_delete_operator(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert "SilverAsh" not in loaded["operators"]
+        assert "Exusiai" in loaded["operators"]
+        captured = capsys.readouterr()
+        assert "Deleted" in captured.out
+
+    def test_delete_nonexistent_operator(self, capsys):
+        profile = self.memory.empty_profile()
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(name="Nonexistent")
+        rc = self.memory.command_delete_operator(args)
+        assert rc == 1
+        captured = capsys.readouterr()
+        assert "No operator" in captured.err
+
+    def test_delete_cleans_pending_confirmations(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["operators"] = {
+            "SilverAsh": self.memory.default_operator("t"),
+            "Exusiai": self.memory.default_operator("t"),
+        }
+        profile["pending_confirmations"] = [
+            {"field": "operators.SilverAsh.elite", "current": 2,
+             "incoming": 1, "reason": "test", "observed_at": "t"},
+            {"field": "operators.Exusiai.level", "current": 80,
+             "incoming": 50, "reason": "test", "observed_at": "t"},
+        ]
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(name="SilverAsh")
+        rc = self.memory.command_delete_operator(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert "SilverAsh" not in loaded["operators"]
+        assert len(loaded["pending_confirmations"]) == 1
+        assert loaded["pending_confirmations"][0]["field"] == "operators.Exusiai.level"
+
+
+class TestCommandGC:
+    def test_gc_removes_stale_entries(self, capsys):
+        profile = self.memory.empty_profile()
+        stale_ts = "2020-01-01T00:00:00Z"
+        profile["pending_confirmations"] = [
+            {"field": "test.field", "current": 1, "incoming": 2, "reason": "test", "observed_at": stale_ts},
+        ]
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(days=30)
+        rc = self.memory.command_gc(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert len(loaded["pending_confirmations"]) == 0
+        captured = capsys.readouterr()
+        assert "Removed 1" in captured.out
+
+    def test_gc_keeps_recent_entries(self, capsys):
+        profile = self.memory.empty_profile()
+        from datetime import datetime, timezone
+        recent = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        profile["pending_confirmations"] = [
+            {"field": "test.field", "current": 1, "incoming": 2, "reason": "test", "observed_at": recent},
+        ]
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(days=30)
+        rc = self.memory.command_gc(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert len(loaded["pending_confirmations"]) == 1
+        captured = capsys.readouterr()
+        assert "Removed 0" in captured.out
+
+    def test_gc_custom_threshold(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["pending_confirmations"] = [
+            {"field": "test.field", "current": 1, "incoming": 2,
+             "reason": "test", "observed_at": "2020-01-01T00:00:00Z"},
+            {"field": "test.field2", "current": 3, "incoming": 4,
+             "reason": "test", "observed_at": "2020-06-01T00:00:00Z"},
+        ]
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(days=365)
+        rc = self.memory.command_gc(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert len(loaded["pending_confirmations"]) == 0
+
+    def test_gc_no_pending(self, capsys):
+        profile = self.memory.empty_profile()
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(days=30)
+        rc = self.memory.command_gc(args)
+        assert rc == 0
+        captured = capsys.readouterr()
+        assert "Removed 0" in captured.out
+
+
+class TestCommandUpdateDryRun:
+    def test_dry_run_does_not_save(self, capsys):
+        profile = self.memory.empty_profile()
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(patch_json=json.dumps({"doctor": {"name": "DryRunDoctor"}}), dry_run=True)
+        rc = self.memory.command_update(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert loaded["doctor"]["name"] is None
+        captured = capsys.readouterr()
+        assert "DryRunDoctor" in captured.out
+
+    def test_dry_run_shows_pending(self, capsys):
+        profile = self.memory.empty_profile()
+        profile["doctor"]["level"] = 100
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(patch_json=json.dumps({"doctor": {"level": 50}}), dry_run=True)
+        rc = self.memory.command_update(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert loaded["doctor"]["level"] == 100
+        assert len(loaded["pending_confirmations"]) == 0
+
+    def test_non_dry_run_saves_normally(self, capsys):
+        profile = self.memory.empty_profile()
+        self.memory.save_profile(profile, touch_updated_at=False)
+        args = SimpleNamespace(patch_json=json.dumps({"doctor": {"name": "RealDoctor"}}), dry_run=False)
+        rc = self.memory.command_update(args)
+        assert rc == 0
+        loaded, _ = self.memory.load_profile()
+        assert loaded["doctor"]["name"] == "RealDoctor"
+
+
 class TestEnvOverride:
     def test_env_override(self, tmp_path: Path):
         custom_dir = tmp_path / "custom"

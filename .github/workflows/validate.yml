@@ -23,6 +23,7 @@ jobs:
           bash -n install.sh
           bash -n update.sh
           bash -n scripts/bump_version.sh
+          bash -n scripts/build_dist.sh
 
       - name: Run validator
         run: python scripts/quick_validate.py arknights-skill
@@ -43,6 +44,8 @@ jobs:
           for f in \
             arknights-skill/references/answer-templates.md \
             arknights-skill/references/examples.md \
+            arknights-skill/references/quickstart.md \
+            arknights-skill/references/doctor-profile-schema.md \
             arknights-skill/agents/openai.yaml \
             arknights-skill/scripts/memory.py \
             arknights-skill/SKILL.md; do

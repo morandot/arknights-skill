@@ -146,3 +146,26 @@ Example:
 Common confusion:
 []
 ```
+
+## 7. Comparison
+
+```text
+Conclusion:
+[Choose A / choose B / depends on scenario]
+
+[Operator A] strengths:
+- 
+- 
+
+[Operator B] strengths:
+- 
+- 
+
+Scenario comparison:
+- Main story / events: 
+- High-difficulty content: 
+- New player accounts: 
+
+Investment advice:
+- 
+```

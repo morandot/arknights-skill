@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- `memory.py list` command: list recorded operators with `--owned` and `--has-pending` filters
+- `memory.py search <keyword>` command: search operators by name or notes (case-insensitive)
+- `memory.py delete-operator <name>` command: delete a recorded operator from the profile
+- `memory.py gc` command: remove stale pending confirmations older than N days (`--days 30`), with `--dry-run` support
+- `memory.py update --dry-run` flag: preview merged result without saving
+- SKILL.md "Comparison" answer shape for side-by-side operator analysis
+- SKILL.md Rule 3 now includes search keyword templates and preferred community sources
+- SKILL.md "When To Use" section now includes bilingual example questions per category
+- SKILL.md `allowed-tools: shell` frontmatter declaration
+- `references/quickstart.md`: step-by-step setup guide
+- `references/answer-templates.md`: Comparison template (§7)
+- `references/examples.md`: Operator Comparison example (Example 6)
+- `agents/openai.yaml`: expanded with `instructions`, `suggested_prompts`, and workflow-oriented `default_prompt`
+- `Makefile`: `test`, `lint`, `validate`, `bump`, `dist`, `all`, `clean` targets
+- `scripts/build_dist.sh`: automated zip + sha256 dist builder
+- `.github/workflows/release.yml`: tag-triggered GitHub Release automation
+- README multi-platform install instructions (Hermes, Claude Code, Codex/OpenClaw, Shell)
+
+### Changed
+- SKILL.md Rule 0: unified `$SKILL_DIR` fallback chain (single snippet replaces platform-specific blocks)
+- SKILL.md Rule 0: new CLI commands documented (list, search, delete-operator, gc, --dry-run)
+- `references/doctor-profile-schema.md`: `modules` field corrected from `true/false` to `0–3` stage integers
+- `references/doctor-profile-schema.md`: added CLI Commands Reference table
+- `.codex/environments/environment.toml`: added `[setup]` script and `[env]` section
+- `registry.yaml`: added `en` tag
+- CI (`validate.yml`): added `build_dist.sh` syntax check and `quickstart.md`/`doctor-profile-schema.md` to required files
+
 ## [1.3.0] - 2026-04-28
 
 ### Changed

@@ -36,10 +36,26 @@
 请帮我安装 `arknights-skill`，来源仓库是 https://github.com/morandot/arknights-skill
 ```
 
-### 快速安装
+### 各平台安装
 
+**Hermes:**
+```bash
+skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill
+```
+
+**Claude Code:**
+```text
+请帮我安装 `arknights-skill`，来源仓库是 https://github.com/morandot/arknights-skill
+```
+
+**Codex / OpenClaw:**
 ```bash
 npx skills add https://github.com/morandot/arknights-skill --skill arknights-skill
+```
+
+**手动安装 (Shell):**
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/install.sh)"
 ```
 
 显式调用：
@@ -48,11 +64,23 @@ npx skills add https://github.com/morandot/arknights-skill --skill arknights-ski
 $arknights-skill
 ```
 
+### 更新
+
 更新直接把下面这句话发给你的 agent：
 
 ```text
 请帮我把已安装的 `arknights-skill` 更新到最新版本，来源仓库是 https://github.com/morandot/arknights-skill
 ```
+
+或手动执行：
+
+```bash
+bash ~/.hermes/skills/research/arknights-skill/update.sh
+```
+
+## 快速入门
+
+见 [arknights-skill/references/quickstart.md](./arknights-skill/references/quickstart.md)。
 
 ## License
 

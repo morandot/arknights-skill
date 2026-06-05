@@ -88,3 +88,28 @@ Relationships and theme:
 
 If you want to continue, I can expand into profile material and the full story route, with spoiler level clearly marked.
 ```
+
+## Example 6: Operator Comparison
+
+```text
+Conclusion:
+Both are strong ground DPS. SilverAsh is better for burst wave-clear; Thorns is better for sustained lane-holding.
+
+SilverAsh strengths:
+- Huge burst damage during skill uptime
+- Wide attack range when skill is active
+- Excellent for clearing grouped enemies
+
+Thorns strengths:
+- Consistent sustained damage without skill dependency
+- Self-sufficient with built-in regeneration
+- Reliable for holding a lane solo
+
+Scenario comparison:
+- Main story / events: Thorns is more comfortable for general use
+- High-difficulty content: SilverAsh burst is harder to replace
+- New player accounts: Thorns is more forgiving to deploy
+
+Investment advice:
+If you lack burst DPS, raise SilverAsh first. If you need a reliable solo laner, raise Thorns first. Ideally raise both.
+```

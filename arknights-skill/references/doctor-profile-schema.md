@@ -101,7 +101,7 @@ Each value:
   "potential": 5,
   "skill_level": 7,
   "masteries": { "1": 3, "2": 0, "3": 1 },
-  "modules": { "m1": true, "m2": false },
+  "modules": { "m1": 3, "m2": 1 },
   "notes": ["top priority defender"],
   "updated_at": "2026-04-24T10:30:00Z"
 }
@@ -115,7 +115,7 @@ Each value:
 | `potential` | integer or null | `1–6`, `null` | Potential level. |
 | `skill_level` | integer or null | `1–7`, `null` | Skill rank. |
 | `masteries` | object | `{ "skill_id": 0–3 }` | Per-skill mastery level. `skill_id` is `"1"`, `"2"`, or `"3"`. |
-| `modules` | object | `{ "module_id": true/false }` | Module unlock status. |
+| `modules` | object | `{ "module_id": 0–3 }` | Per-module upgrade stage. `module_id` is a string identifier. |
 | `notes` | string array | — | Short freeform notes. Each entry ≤ 240 chars. |
 | `updated_at` | ISO 8601 UTC string | — | Last modified timestamp. Managed by `memory.py`. |
 
@@ -153,6 +153,22 @@ Each item:
 | `observed_at` | ISO 8601 UTC string | When the conflict was detected. |
 
 Use `memory.py confirm --field <field> --apply` to accept, or `memory.py dismiss --field <field>` to discard.
+
+---
+
+## CLI Commands Reference
+
+| Command | Description |
+|---|---|
+| `path` | Print the profile file path. |
+| `read` | Load or initialize the profile; print JSON to stdout, pending confirmations to stderr. |
+| `update --patch-json '<json>' [--dry-run]` | Merge structured facts. With `--dry-run`, preview without saving. |
+| `confirm --field <field> --apply` | Apply a pending downgrade/conflict. |
+| `dismiss --field <field>` | Discard a pending entry. |
+| `list [--owned] [--has-pending]` | List recorded operators. Filter by ownership or pending status. |
+| `search <keyword>` | Search operators by name or notes (case-insensitive). |
+| `delete-operator <name>` | Delete a recorded operator. |
+| `gc [--days N] [--dry-run]` | Remove pending confirmations older than N days (default: 30). |
 
 ---
 

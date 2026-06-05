@@ -2,6 +2,7 @@
 name: arknights-skill
 description: Answer Arknights questions about operator roles, skill mechanics, investment planning, story context, terminology, and stage strategy; read and maintain a local structured Doctor profile so advice can adapt to the user's roster and progress; clearly separate fresh version checks from non-current judgment.
 compatibility: Compatible with Agent Skills clients, including Codex and Claude Code. Includes the local script `scripts/memory.py` and requires no external credentials. Questions about the current version, latest events, or latest strength assessments require live lookup; when offline, clearly state that conclusions are not current.
+allowed-tools: shell
 metadata:
   openclaw:
     homepage: https://github.com/morandot/arknights-skill
@@ -16,24 +17,30 @@ A dedicated skill for Arknights questions. The goal is not to dump trivia, but t
 Use this skill when the user asks about:
 
 - Operator basics, roles, branches, or availability
+  - _"银灰值不值得练？"_ / _"Is SilverAsh worth building?"_
 - Skills, talents, modules, potentials, masteries, and elite promotion value
+  - _"银灰专精哪个技能？"_ / _"Which SilverAsh skill to mastery?"_
 - Whether an operator is worth building, who to build first, or how to allocate resources
+  - _"新手该先练谁？"_ / _"Who should a new player raise first?"_
 - Squad composition, main story, event, or high-difficulty stage strategy
+  - _"OF-F4 怎么打？"_ / _"How to clear OF-F4?"_
 - Worldbuilding, factions, character relationships, or story summaries
+  - _"整合运动的背景是什么？"_ / _"What is Reunion's backstory?"_
 - Game terminology
+  - _"暖机是什么意思？"_ / _"What does warm-up mean?"_
 - Version environment, event summaries, or current strength assessments
+  - _"当前版本谁最强？"_ / _"Who is strongest in the current version?"_
+- Comparing two or more operators
+  - _"银灰和棘刺谁更好？"_ / _"SilverAsh vs Thorns, who is better?"_
 
 ## Core Rules
 
 ### 0. Use The Local Doctor Profile
 
-If the current client allows local file access, read the structured profile next to the installed skill first. Do not assume the current working directory is the skill directory. In Claude Code, prefer `CLAUDE_SKILL_DIR`; in other Agent Skills clients, resolve the script path relative to the directory containing this `SKILL.md`.
+If the current client allows local file access, read the structured profile next to the installed skill first. Do not assume the current working directory is the skill directory. Resolve the script path with this fallback:
 
 ```bash
-# Claude Code
-python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" read
-
-# Other Agent Skills clients: replace $SKILL_DIR with this SKILL.md directory.
+SKILL_DIR="${CLAUDE_SKILL_DIR:-${SKILL_DIR:-$(dirname "$(find ~/.hermes ~/.config -name memory.py -print -quit 2>/dev/null)")}}"
 python3 "$SKILL_DIR/scripts/memory.py" read
 ```
 
@@ -79,10 +86,29 @@ Pending confirmations can be resolved manually:
 
 ```bash
 # Apply a pending downgrade / conflict
-python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" confirm --field "SilverAsh.elite" --apply
+python3 "$SKILL_DIR/scripts/memory.py" confirm --field "SilverAsh.elite" --apply
 
 # Dismiss (discard) a pending entry
-python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" dismiss --field "SilverAsh.elite"
+python3 "$SKILL_DIR/scripts/memory.py" dismiss --field "SilverAsh.elite"
+```
+
+Additional profile management commands:
+
+```bash
+# List recorded operators (filter with --owned or --has-pending)
+python3 "$SKILL_DIR/scripts/memory.py" list --owned
+
+# Search operators by name or notes
+python3 "$SKILL_DIR/scripts/memory.py" search silver
+
+# Delete a recorded operator
+python3 "$SKILL_DIR/scripts/memory.py" delete-operator SilverAsh
+
+# Remove stale pending confirmations (older than 30 days)
+python3 "$SKILL_DIR/scripts/memory.py" gc --days 30
+
+# Preview merged result without saving
+python3 "$SKILL_DIR/scripts/memory.py" update --patch-json '...' --dry-run
 ```
 
 ### 1. Lead With The Decision
@@ -129,6 +155,9 @@ Treat these questions as freshness-critical by default:
 Rules:
 
 - If live web access is available, search before answering.
+- Preferred search keywords (adapt to user language):
+  - Chinese: `明日方舟 {operator_name} 强度 {current_version}`, NGA 明日方舟版, PRTS Wiki
+  - English: `Arknights {operator_name} guide {current_version}`, Gamepress, Arknights Wiki
 - If no search was performed, explicitly state that the conclusion is based on non-current knowledge.
 - Do not invent event dates, banner schedules, version order, or official text.
 
@@ -216,6 +245,16 @@ Default structure:
 5. Failure points
 6. Lower-investment substitutes
 
+### Comparison
+
+Default structure:
+
+1. Conclusion: choose A / choose B / depends on scenario
+2. Each operator's strengths
+3. Each operator's weaknesses
+4. Scenario-by-scenario comparison
+5. Investment advice
+
 ## Agent Configuration (optional)
 
 `agents/openai.yaml` defines the Agent prompt configuration specific to this skill:
@@ -230,6 +269,7 @@ This file is automatically loaded by the nanobot runtime; manual edits are rarel
 
 Read these only when needed; do not load all of them by default:
 
+- Quick start guide: [references/quickstart.md](references/quickstart.md)
 - Structured templates: [references/answer-templates.md](references/answer-templates.md)
 - Style examples: [references/examples.md](references/examples.md)
 - Doctor profile schema: [references/doctor-profile-schema.md](references/doctor-profile-schema.md)

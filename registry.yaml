@@ -17,6 +17,7 @@ skills:
       - arknights
       - guide
       - zh-CN
+      - en
     min_hermes_version: "0.1.0"
     last_updated: "2026-04-28"
     install_command: skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill
