@@ -107,7 +107,7 @@ arknights-skill/                  ← repo root
 ├── pyproject.toml                # Python project config
 ├── Makefile                      # build/test/lint automation
 ├── install.sh / update.sh        # Install/update scripts
-├── VERSION                       # Current: 1.4.0
+├── VERSION                       # Current: 1.5.0
 ├── LICENSE                       # MIT
 ├── README.md                     # This file (English)
 └── README.zh-CN.md               # Chinese version
