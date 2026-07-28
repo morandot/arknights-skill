@@ -1,10 +1,13 @@
 ---
 name: arknights-skill
+slug: arknights-skill
+displayName: Arknights Guide
 description: >
   Use when the user asks about Arknights operators, skills, masteries, modules,
   stages, lore, terms, or resource planning. Do NOT use for other games,
   non-Arknights gacha advice, or real-time event schedules (requires live
   lookup).
+summary: Arknights operator evaluation, skill priority, stage strategy, lore, and local Doctor profile.
 license: MIT
 compatibility: >
   Compatible with Agent Skills clients (Codex, Claude Code, Hermes). Requires
@@ -12,12 +15,12 @@ compatibility: >
   credentials needed. Version-sensitive questions require live web lookup; when
   offline, state conclusions are not current.
 allowed-tools: shell
+version: "1.5.0"
 metadata:
   homepage: https://github.com/morandot/arknights-skill
   openclaw:
     homepage: https://github.com/morandot/arknights-skill
   author: moran
-  version: "1.5.0"
 ---
 
 # Arknights Guide

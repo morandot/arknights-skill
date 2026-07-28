@@ -14,6 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install clawhub CLI
+        run: npm install -g clawhub
+
       - name: Build dist
         run: bash scripts/build_dist.sh
 
@@ -28,3 +35,17 @@ jobs:
             dist/arknights-skill-${{ steps.version.outputs.version }}.zip
             dist/arknights-skill-${{ steps.version.outputs.version }}.sha256
           generate_release_notes: true
+
+      - name: Publish to ClawHub
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+        run: |
+          clawhub publish arknights-skill \
+            --slug arknights-skill \
+            --version "${{ steps.version.outputs.version }}" \
+            --name "Arknights Skill" \
+            --source-repo "${{ github.repository }}" \
+            --source-commit "${{ github.sha }}" \
+            --source-ref "${{ github.ref_name }}" \
+            --source-path "arknights-skill" \
+            --changelog "${{ github.event.head_commit.message || github.event.release.body || 'Automated release' }}"
