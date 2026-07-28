@@ -1,8 +1,8 @@
 # Arknights Skill
 
-[English](./README.md)
+[English](./README.md) · [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io) · [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE) · [![Version](https://img.shields.io/badge/version-1.4.0-brightgreen)](./VERSION)
 
-一个面向《明日方舟》的 Agent Skill，用来回答干员定位、技能机制、养成规划、剧情梳理、术语解释和关卡思路。
+一个面向《明日方舟》的 Agent Skill，用来回答干员定位、技能机制、养成规划、剧情梳理、术语解释和关卡思路——并利用本地博士档案实现个性化建议。
 
 > 非官方项目。
 > 不内置游戏数据库，不替代实时 wiki 或计算器。
@@ -10,13 +10,16 @@
 
 ## 适合什么场景
 
-- “这个干员值不值得练？”
-- “这个角色一二三技能该专哪个？”
-- “我新手资源有限，应该先练谁？”
-- “这关怎么打，有没有低配思路？”
-- “这个角色的背景故事是什么，先别剧透太多”
-- “法蒸、暖机、轴、对策卡是什么意思？”
-- “现在这个干员在当前版本还强吗？”
+| 你问 | Skill 做的 |
+|------|-----------|
+| "这个干员值不值得练？" | 评估定位、优劣、养成优先级 |
+| "这个角色一二三技能该专哪个？" | 推荐专精技能和顺序 |
+| "我新手资源有限，应该先练谁？" | 根据阵容缺口推荐高效养成路线 |
+| "这关怎么打，有没有低配思路？" | 提供可执行的关卡方案 + 替换逻辑 |
+| "这个角色的背景故事是什么，先别剧透太多" | 剧透可控的剧情概括 |
+| "法蒸、暖机、轴、对策卡是什么意思？" | 清晰定义 + 实战语境 |
+| "现在这个干员在当前版本还强吗？" | 实时搜索优先，离线时标注非当前结论 |
+| "银灰和棘刺谁更好？" | 按场景分维度对比 |
 
 完整规则见 [arknights-skill/SKILL.md](./arknights-skill/SKILL.md)。
 
@@ -81,6 +84,34 @@ bash ~/.hermes/skills/research/arknights-skill/update.sh
 ## 快速入门
 
 见 [arknights-skill/references/quickstart.md](./arknights-skill/references/quickstart.md)。
+
+## 项目结构
+
+```
+arknights-skill/                  ← repo 根目录
+├── arknights-skill/              ← skill 包
+│   ├── SKILL.md                  # Skill 指令（frontmatter + 6 条规则 + 7 种回答模板）
+│   ├── agents/openai.yaml        # Agent 配置
+│   ├── references/
+│   │   ├── answer-templates.md   # 7 种回答模板
+│   │   ├── examples.md           # 示例节奏（含反模式）
+│   │   ├── quickstart.md         # 三步快速入门
+│   │   └── doctor-profile-schema.md
+│   └── scripts/
+│       └── memory.py             # 档案管理工具
+├── tests/
+│   ├── test_memory.py            # 58 个测试用例
+│   └── conftest.py               # 测试夹具
+├── CHANGELOG.md                  # 发布历史
+├── registry.yaml                 # Hermes 注册
+├── pyproject.toml                # Python 项目配置
+├── Makefile                      # 构建/测试/格式检查
+├── install.sh / update.sh        # 安装/更新脚本
+├── VERSION                       # 当前: 1.4.0
+├── LICENSE                       # MIT
+├── README.md                     # 英文版
+└── README.zh-CN.md               # 本文件
+```
 
 ## License
 

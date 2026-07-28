@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- SKILL.md: HARD-GATE (must read profile before answering) and Post-answer gate (must update profile after answering)
+- SKILL.md: `license: MIT` frontmatter field
+- SKILL.md: "When NOT To Use" section with 4 exclusion scenarios
+- SKILL.md: "Common Pitfalls" section with 6 anti-patterns
+- references/examples.md: Example 7 "Common Mistakes" with 4 anti-pattern examples (absolute evaluation, squad copy without substitution, old-version caveat, profile dump)
+- references/doctor-profile-schema.md: "Edge Cases" section (multi-account, multilingual names, concurrent writes)
+
+### Changed
+- SKILL.md: `description` field rewritten with "Use when" trigger keywords upfront and "Do NOT use" gate
+- SKILL.md: Rule 3 converted to numbered 4-step checklist with branching
+- SKILL.md: Spoiler warning formatted as blockquote
+- SKILL.md: "Do Not Do These" expanded (don't recommend pull without roster check, don't dump full profile)
+- README.md / README.zh-CN.md: Added badges, "What You Can Ask" table, corrected project structure tree
+- references/answer-templates.md: Added M1→M3 value and "most efficient stopping point" fields
+- agents/openai.yaml: Workflow steps aligned with HARD-GATE + post-answer gate
+
 ## [1.4.0] - 2026-06-05
 
 ### Added
