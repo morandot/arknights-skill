@@ -1,6 +1,6 @@
 # Arknights Skill
 
-[Chinese](./README.zh-CN.md) · [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io) · [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE) · [![Version](https://img.shields.io/badge/version-1.4.0-brightgreen)](./VERSION)
+[Chinese](./README.zh-CN.md) · [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io) · [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE) · [![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)](./VERSION)
 
 An Agent Skill for **Arknights** that helps answer operator evaluation, skill priority, progression planning, lore questions, terminology, and stage strategy — personalized using a local Doctor profile.
 

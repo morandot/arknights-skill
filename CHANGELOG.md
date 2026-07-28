@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.5.0] - 2026-07-28
+
 ### Added
 - SKILL.md: HARD-GATE (must read profile before answering) and Post-answer gate (must update profile after answering)
 - SKILL.md: `license: MIT` frontmatter field

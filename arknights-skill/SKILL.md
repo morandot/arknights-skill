@@ -17,7 +17,7 @@ metadata:
   openclaw:
     homepage: https://github.com/morandot/arknights-skill
   author: moran
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # Arknights Guide
