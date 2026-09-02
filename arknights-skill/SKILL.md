@@ -15,7 +15,7 @@ compatibility: >
   offline, state conclusions are not current.
 allowed-tools: shell
 metadata:
-  version: "1.7.0"
+  version: "1.6.1"
   homepage: https://github.com/morandot/arknights-skill
   openclaw-homepage: https://github.com/morandot/arknights-skill
   author: moran
