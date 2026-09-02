@@ -4,7 +4,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)](./VERSION)
+[![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)](./VERSION)
 
 一个面向《明日方舟》的 Agent Skill，用来回答干员定位、技能机制、养成规划、剧情梳理、术语解释和关卡思路，并利用本地博士档案给出个性化建议。
 
@@ -64,6 +64,16 @@ npx skills add https://github.com/morandot/arknights-skill --skill arknights-ski
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/install.sh)"
 ```
+
+该命令会执行从 GitHub 拉取的脚本。如需先审阅再执行：
+
+```bash
+curl -fsSL -o /tmp/arknights-install.sh https://raw.githubusercontent.com/morandot/arknights-skill/main/install.sh
+less /tmp/arknights-install.sh   # 检查脚本内容
+bash /tmp/arknights-install.sh   # 审阅后执行
+```
+
+如需固定到已发布版本而非 `main`，设置 `REPO_REF`（例如 `REPO_REF=v1.5.0`）。
 
 安装后在任意 agent 会话中直接调用：
 

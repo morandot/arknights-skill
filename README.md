@@ -4,7 +4,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.0-brightgreen)](./VERSION)
+[![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)](./VERSION)
 
 An Agent Skill for **Arknights** that helps answer operator evaluation, skill priority, progression planning, lore questions, terminology, and stage strategy, personalized with a local Doctor profile.
 
@@ -64,6 +64,16 @@ npx skills add https://github.com/morandot/arknights-skill --skill arknights-ski
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/morandot/arknights-skill/main/install.sh)"
 ```
+
+This runs a script fetched from GitHub. To review it first:
+
+```bash
+curl -fsSL -o /tmp/arknights-install.sh https://raw.githubusercontent.com/morandot/arknights-skill/main/install.sh
+less /tmp/arknights-install.sh   # inspect the script
+bash /tmp/arknights-install.sh   # run after review
+```
+
+To pin a released version instead of `main`, set `REPO_REF` (e.g. `REPO_REF=v1.5.0`).
 
 Once installed, invoke the skill directly in any agent session with:
 
