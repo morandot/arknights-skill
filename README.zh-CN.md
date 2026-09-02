@@ -4,7 +4,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)](./VERSION)
+[![Version](https://img.shields.io/badge/version-1.6.1-brightgreen)](./VERSION)
 
 一个面向《明日方舟》的 Agent Skill，用来回答干员定位、技能机制、养成规划、剧情梳理、术语解释和关卡思路，并利用本地博士档案给出个性化建议。
 

@@ -1,6 +1,6 @@
 [project]
 name = "arknights-skill"
-version = "1.7.0"
+version = "1.6.1"
 description = "Agent Skill for Arknights guidance and local Doctor profile memory."
 requires-python = ">=3.11"
 dependencies = [

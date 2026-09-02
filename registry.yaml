@@ -9,7 +9,7 @@ skills:
       maintain a local structured Doctor profile and explicitly handles
       spoiler control and version freshness.
     author: moran
-    version: 1.7.0
+    version: 1.6.1
     repository: git+https://github.com/morandot/arknights-skill.git
     path: arknights-skill
     tags:

@@ -4,7 +4,7 @@
 
 [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-informational)](https://agentskills.io)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.7.0-brightgreen)](./VERSION)
+[![Version](https://img.shields.io/badge/version-1.6.1-brightgreen)](./VERSION)
 
 An Agent Skill for **Arknights** that helps answer operator evaluation, skill priority, progression planning, lore questions, terminology, and stage strategy, personalized with a local Doctor profile.
 
