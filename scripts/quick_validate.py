@@ -44,11 +44,6 @@ def validate_skill(skill_path):
         "compatibility",
         "allowed-tools",
         "metadata",
-        # Platform-specific extras (SkillHub, ClawHub, etc.)
-        "slug",
-        "displayName",
-        "summary",
-        "version",
     }
 
     unexpected_keys = set(frontmatter.keys()) - allowed_properties

@@ -1,13 +1,12 @@
 ---
 name: arknights-skill
-slug: arknights-skill
-displayName: Arknights Guide
 description: >
   Use when the user asks about Arknights operators, skills, masteries, modules,
   stages, lore, terms, or resource planning. Do NOT use for other games,
   non-Arknights gacha advice, or real-time event schedules (requires live
-  lookup).
-summary: Arknights operator evaluation, skill priority, stage strategy, lore, and local Doctor profile.
+  lookup). On invocation it reads and updates a local Doctor profile stored
+  only on this machine (~/.config/arknights-skill/doctor-profile.json);
+  profile data is never transmitted.
 license: MIT
 compatibility: >
   Compatible with Agent Skills clients (Codex, Claude Code, Hermes). Requires
@@ -15,11 +14,10 @@ compatibility: >
   credentials needed. Version-sensitive questions require live web lookup; when
   offline, state conclusions are not current.
 allowed-tools: shell
-version: "1.5.0"
 metadata:
+  version: "1.7.0"
   homepage: https://github.com/morandot/arknights-skill
-  openclaw:
-    homepage: https://github.com/morandot/arknights-skill
+  openclaw-homepage: https://github.com/morandot/arknights-skill
   author: moran
 ---
 
@@ -89,9 +87,9 @@ If neither `$CLAUDE_SKILL_DIR` nor `$SKILL_DIR` is set, search `~/.hermes/skills
 - If stored facts conflict with explicit information in the current turn, treat the new information as a confirmation candidate rather than overwriting the old profile directly.
 - Reply in the user's language unless they ask for another language.
 
-**Post-answer gate: You MUST update the profile after answering.**
+**Post-answer gate: Update the profile only when the user provided new facts.**
 
-After answering, extract only explicitly provided facts from the user's current turn and update the profile:
+If the user's current turn explicitly provided account or operator facts, extract only those explicitly provided facts and update the profile after answering. If the turn contained no new explicit facts, skip the update:
 
 ```bash
 python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" update --patch-json '{"operators":{"SilverAsh":{"owned":true,"elite":2,"level":60,"masteries":{"3":3}}}}'
