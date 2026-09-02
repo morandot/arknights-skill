@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 _Nothing yet._
 
+## [1.7.0] - 2026-09-02
+
+### Changed
+- SKILL.md: `description` now discloses local Doctor profile persistence (storage path, local-only)
+- SKILL.md: post-answer profile update is conditional on facts explicitly provided in the current turn
+- agents/openai.yaml: greeting no longer recites profile contents; profile is used silently per "Do Not Do These"
+- SKILL.md: frontmatter restricted to spec fields (`slug`/`displayName`/`summary` removed, `version` moved into `metadata`); passes the official `skills-ref` validator
+
+### Documentation
+- README.md / README.zh-CN.md / references/quickstart.md: added a review-before-run alternative and `REPO_REF` version pinning for the shell installer
+
 ## [1.5.0] - 2026-07-28
 
 ### Added
