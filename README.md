@@ -21,7 +21,7 @@ An Agent Skill for **Arknights** that helps answer operator evaluation, skill pr
 | "I'm a new player with limited resources. Who should I build first?" | Suggests efficient build order based on roster gaps |
 | "How do I clear this stage? Any low-end substitutes?" | Provides executable stage plan with substitution logic |
 | "What is this character's backstory? Keep spoilers light." | Spoiler-controlled lore summary |
-| "What do terms like warm-up, cycle, or tech card mean?" | Clear definitions with practical context |
+| "What do terms like caster nuke, warm-up, cycle, or tech card mean?" | Clear definitions with practical context |
 | "Is this operator still strong in the current version?" | Search-first freshness check, or caveated non-current answer |
 | "SilverAsh vs Thorns, who is better?" | Side-by-side comparison by scenario |
 
@@ -73,7 +73,7 @@ less /tmp/arknights-install.sh   # inspect the script
 bash /tmp/arknights-install.sh   # run after review
 ```
 
-To pin a released version instead of `main`, set `REPO_REF` (e.g. `REPO_REF=v1.5.0`).
+To pin a released version instead of `main`, set `REPO_REF` (e.g. `REPO_REF=vX.Y.Z`).
 
 Once installed, invoke the skill directly in any agent session with:
 
@@ -116,6 +116,8 @@ arknights-skill/
 ├── tests/
 │   ├── test_memory.py
 │   └── conftest.py
+├── scripts/                      # repo tooling (bump, validate, dist)
+├── .github/workflows/            # CI (validate + release)
 ├── CHANGELOG.md
 ├── registry.yaml
 ├── pyproject.toml

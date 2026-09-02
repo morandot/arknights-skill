@@ -73,7 +73,7 @@ less /tmp/arknights-install.sh   # 检查脚本内容
 bash /tmp/arknights-install.sh   # 审阅后执行
 ```
 
-如需固定到已发布版本而非 `main`，设置 `REPO_REF`（例如 `REPO_REF=v1.5.0`）。
+如需固定到已发布版本而非 `main`，设置 `REPO_REF`（例如 `REPO_REF=vX.Y.Z`）。
 
 安装后在任意 agent 会话中直接调用：
 
@@ -116,6 +116,8 @@ arknights-skill/
 ├── tests/
 │   ├── test_memory.py
 │   └── conftest.py
+├── scripts/                      # 仓库工具（版本号、校验、打包）
+├── .github/workflows/            # CI（校验 + 发布）
 ├── CHANGELOG.md
 ├── registry.yaml
 ├── pyproject.toml

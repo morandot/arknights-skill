@@ -2,7 +2,7 @@ registry_version: 1
 skills:
   arknights-skill:
     name: arknights-skill
-    description: Arknights guide and information skill
+    description: Arknights guide skill with a local Doctor profile for personalized advice
     long_description: |
       An Arknights guide skill covering operator evaluation, skill priority,
       squad advice, lore summaries, terminology, and stage strategy. It can

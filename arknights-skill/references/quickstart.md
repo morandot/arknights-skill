@@ -24,7 +24,7 @@ less /tmp/arknights-install.sh   # inspect the script
 bash /tmp/arknights-install.sh   # run after review
 ```
 
-To pin a released version instead of `main`, set `REPO_REF` (e.g. `REPO_REF=v1.5.0`).
+To pin a released version instead of `main`, set `REPO_REF` (e.g. `REPO_REF=vX.Y.Z`).
 
 **Claude Code:**
 Tell your agent: "Install the skill `arknights-skill` from https://github.com/morandot/arknights-skill"

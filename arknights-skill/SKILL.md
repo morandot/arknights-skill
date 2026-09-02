@@ -9,7 +9,7 @@ description: >
   profile data is never transmitted.
 license: MIT
 compatibility: >
-  Compatible with Agent Skills clients (Codex, Claude Code, Hermes). Requires
+  Compatible with Agent Skills clients (Codex, Claude Code, Hermes, OpenClaw). Requires
   shell access for the bundled Python script (`scripts/memory.py`). No external
   credentials needed. Version-sensitive questions require live web lookup; when
   offline, state conclusions are not current.
@@ -312,7 +312,7 @@ Avoid these when answering:
 - **`default_prompt`** — The default invocation prompt, which emphasizes fact–evaluation separation, leading with conclusions, and freshness caveats for version-sensitive topics.
 - **`policy.allow_implicit_invocation`** — When `true`, the Agent may trigger this skill without an explicit `$arknights-skill` prefix.
 
-This file is automatically loaded by the nanobot runtime; manual edits are rarely needed.
+Some Agent clients load this file automatically as this skill's default prompt configuration; manual edits are rarely needed.
 
 ## References
 
