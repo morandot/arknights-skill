@@ -29,3 +29,6 @@ dist/
 # Codex
 .codex/
 .alma-snapshots
+
+# Mimosa 安全扫描产物
+.mimosa/
