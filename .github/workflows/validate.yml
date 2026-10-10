@@ -8,8 +8,12 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
+        # NOTE: 3.15 tracks the newest available build ("-dev") because
+        # actions/python-versions lags behind final releases (3.15.0 final
+        # shipped 2026-10-09; only rc.3 builds are published as of now).
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15-dev"]
 
     steps:
       - uses: actions/checkout@v4
