@@ -1,21 +1,24 @@
 ---
 name: arknights-skill
 description: >
-  Use when the user asks about Arknights operators, skills, masteries, modules,
-  stages, lore, terms, or resource planning. Do NOT use for other games,
-  non-Arknights gacha advice, or real-time event schedules (requires live
-  lookup). On invocation it reads and updates a local Doctor profile stored
-  only on this machine (~/.config/arknights-skill/doctor-profile.json);
-  profile data is never transmitted.
+  Answers questions about Arknights operators, skills, masteries, modules,
+  stages, lore, terms, and resource planning. Triggers when the user asks
+  about operator builds, skill priority, stage strategy, lore, terminology,
+  or version environment. Does not cover other games, non-Arknights gacha
+  advice, or real-time event schedules (requires live lookup). On invocation
+  it reads and updates a local Doctor profile stored only on this machine
+  (~/.config/arknights-skill/doctor-profile.json); profile data is never
+  transmitted.
 license: MIT
 compatibility: >
-  Compatible with Agent Skills clients (Codex, Claude Code, Hermes, OpenClaw). Requires
-  shell access for the bundled Python script (`scripts/memory.py`). No external
-  credentials needed. Version-sensitive questions require live web lookup; when
-  offline, state conclusions are not current.
+  Requires shell access to run the bundled Python script
+  (`scripts/memory.py`, stdlib only, Python 3.11+ and verified on 3.15).
+  Works with Agent Skills clients (Codex, Claude Code, Hermes, OpenClaw). No
+  external credentials needed. Version-sensitive questions require live web
+  lookup; when offline, conclusions are not current.
 allowed-tools: shell
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   homepage: https://github.com/morandot/arknights-skill
   openclaw-homepage: https://github.com/morandot/arknights-skill
   author: moran
@@ -92,7 +95,7 @@ If neither `$CLAUDE_SKILL_DIR` nor `$SKILL_DIR` is set, search `~/.hermes/skills
 If the user's current turn explicitly provided account or operator facts, extract only those explicitly provided facts and update the profile after answering. If the turn contained no new explicit facts, skip the update:
 
 ```bash
-python3 "$CLAUDE_SKILL_DIR/scripts/memory.py" update --patch-json '{"operators":{"SilverAsh":{"owned":true,"elite":2,"level":60,"masteries":{"3":3}}}}'
+python3 "$SKILL_DIR/scripts/memory.py" update --patch-json '{"operators":{"SilverAsh":{"owned":true,"elite":2,"level":60,"masteries":{"3":3}}}}'
 ```
 
 Only write these facts:

@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 _Nothing yet._
 
+## [1.7.0] - 2026-10-10
+
+### Changed
+- SKILL.md: `description` rewritten in third person with trigger keywords (spec best practice)
+- SKILL.md: `compatibility` now declares Python 3.11+ support, verified on 3.15
+- CI (`validate.yml`): test matrix expanded to Python 3.11–3.15
+- `pyproject.toml`: pytest now fails on `DeprecationWarning` to catch 3.16 removals early
+- `scripts/quick_validate.py`: enforces name-matches-directory, non-empty description, metadata string map, and SKILL.md body ≤500 lines
+- `scripts/build_dist.sh`, `scripts/quick_validate.py`: explicit `encoding="utf-8"` on all file writes/reads (PEP 686 hygiene)
+
 ## [1.6.1] - 2026-09-02
 
 ### Changed

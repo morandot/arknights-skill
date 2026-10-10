@@ -38,7 +38,7 @@ import hashlib
 fname = '${ARCHIVE_NAME}'
 data = open(fname, 'rb').read()
 h = hashlib.sha256(data).hexdigest()
-with open(fname.replace('.zip', '.sha256'), 'w') as f:
+with open(fname.replace('.zip', '.sha256'), 'w', encoding='utf-8') as f:
     f.write(f'{h}  {fname}\n')
 "
 

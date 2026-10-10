@@ -20,7 +20,7 @@ def validate_skill(skill_path):
     if not skill_md.exists():
         return False, "SKILL.md not found"
 
-    content = skill_md.read_text()
+    content = skill_md.read_text(encoding="utf-8")
     if not content.startswith("---"):
         return False, "No YAML frontmatter found"
 
@@ -60,9 +60,16 @@ def validate_skill(skill_path):
     if "description" not in frontmatter:
         return False, "Missing 'description' in frontmatter"
 
+    # The skill directory name must match the frontmatter name (spec requirement).
     name = frontmatter.get("name", "")
     if not isinstance(name, str):
         return False, f"Name must be a string, got {type(name).__name__}"
+    if name != skill_path.name:
+        return (
+            False,
+            f"Name '{name}' must match the parent directory name '{skill_path.name}'",
+        )
+
     name = name.strip()
     if name:
         if not re.match(r"^[a-z0-9-]+$", name):
@@ -80,19 +87,22 @@ def validate_skill(skill_path):
                 False,
                 f"Name is too long ({len(name)} characters). Maximum is {MAX_SKILL_NAME_LENGTH} characters.",
             )
+        if "<" in name or ">" in name:
+            return False, "Name cannot contain angle brackets (< or >)"
 
     description = frontmatter.get("description", "")
     if not isinstance(description, str):
         return False, f"Description must be a string, got {type(description).__name__}"
     description = description.strip()
-    if description:
-        if "<" in description or ">" in description:
-            return False, "Description cannot contain angle brackets (< or >)"
-        if len(description) > 1024:
-            return (
-                False,
-                f"Description is too long ({len(description)} characters). Maximum is 1024 characters.",
-            )
+    if not description:
+        return False, "Description must be non-empty"
+    if "<" in description or ">" in description:
+        return False, "Description cannot contain angle brackets (< or >)"
+    if len(description) > 1024:
+        return (
+            False,
+            f"Description is too long ({len(description)} characters). Maximum is 1024 characters.",
+        )
 
     compatibility = frontmatter.get("compatibility", "")
     if compatibility and not isinstance(compatibility, str):
@@ -101,6 +111,22 @@ def validate_skill(skill_path):
         return (
             False,
             f"Compatibility is too long ({len(compatibility)} characters). Maximum is 500 characters.",
+        )
+
+    metadata = frontmatter.get("metadata")
+    if metadata is not None:
+        if not isinstance(metadata, dict):
+            return False, "Metadata must be a mapping of string keys to string values"
+        for key, value in metadata.items():
+            if not isinstance(key, str) or not isinstance(value, str):
+                return False, "Metadata must be a mapping of string keys to string values"
+
+    # Keep SKILL.md body within the progressive-disclosure budget (<500 lines).
+    body_lines = content.splitlines()[len(match.group(0).splitlines()) :]
+    if len(body_lines) > 500:
+        return (
+            False,
+            f"SKILL.md body is too long ({len(body_lines)} lines). Maximum is 500 lines.",
         )
 
     return True, "Skill is valid!"
