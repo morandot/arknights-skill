@@ -1,4 +1,4 @@
-# Arknights Skill
+# 明日方舟助手技能
 
 [English](./README.md) · [中文](./README.zh-CN.md)
 
