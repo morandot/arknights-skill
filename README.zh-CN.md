@@ -45,6 +45,9 @@
 
 ### 各平台安装
 
+**WorkBuddy：**
+[在 WorkBuddy 中打开](https://www.workbuddy.cn/share/asset?shareCode=jOkvjEfvjUCXbasIfN2dDp&sig=7Bd3cPlt1c2adnvL)，在 WorkBuddy 开放平台一键安装。
+
 **Hermes:**
 ```bash
 skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill

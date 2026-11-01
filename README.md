@@ -45,6 +45,9 @@ Install the skill `arknights-skill` from https://github.com/morandot/arknights-s
 
 ### Platform-specific
 
+**WorkBuddy:**
+[Open in WorkBuddy](https://www.workbuddy.cn/share/asset?shareCode=jOkvjEfvjUCXbasIfN2dDp&sig=7Bd3cPlt1c2adnvL) — one-click install on the WorkBuddy open platform (Chinese UI).
+
 **Hermes:**
 ```bash
 skills add git+https://github.com/morandot/arknights-skill.git --skill arknights-skill
